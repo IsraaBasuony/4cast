@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="myFontBold">
+        <item name="android:fontFamily">@font/bold</item>
+    </style>
+
+    <style name="myFontRegular">
+        <item name="android:fontFamily">@font/regular</item>
+    </style>
+
+    <style name="myFontMedium">
+        <item name="android:fontFamily">@font/medium</item>
+    </style>
+
+    <style name="myFontSemiDold">
+        <item name="android:fontFamily">@font/semibold</item>
+    </style>
+</resources>
