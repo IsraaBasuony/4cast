@@ -19,7 +19,6 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="center_vertical"
             android:background="@color/primary"
-            app:navigationIcon="@drawable/menu_icon"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
             <TextView
                 android:id="@+id/title_toolbar"

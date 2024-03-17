@@ -67,8 +67,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         /// Default Navigation bar Tab Selected
         replaceFragment(HomeFragment())
         binding.navigationView.setCheckedItem(R.id.nav_home)
+        binding.appBarMain.toolbar.setNavigationIcon(R.drawable.menu_icon)
         tittleToolbar.text = getString(R.string.app_name)
         binding.navigationView.setBackgroundColor(getColor(R.color.primary))
+
     }
 
 
