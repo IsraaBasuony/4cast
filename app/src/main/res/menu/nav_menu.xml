@@ -4,20 +4,20 @@
     tools:showIn="navigation_view">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/homeFragment"
             android:icon="@drawable/baseline_home_24"
             android:title="@string/menu_home"
             />
         <item
-            android:id="@+id/nav_favorite"
+            android:id="@+id/favouriteFragment"
             android:icon="@drawable/baseline_favorite_24"
             android:title="@string/favorite" />
         <item
-            android:id="@+id/nav_alerts"
+            android:id="@+id/alertFragment"
             android:icon="@drawable/baseline_notifications_24"
             android:title="@string/alerts" />
         <item
-            android:id="@+id/nav_Settings"
+            android:id="@+id/settingFragment"
             android:icon="@drawable/baseline_settings_24"
             android:title="@string/settings" />
 
