@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/hour_cardView"
+    android:layout_width="90dp"
+    android:layout_height="160dp"
+    android:layout_margin="8dp"
+    android:padding="16dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="26dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/hour_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="12:00pm"
+            android:textColor="@color/gray"
+            style="@style/myFontRegular"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/hour_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/icon_10d"
+            app:layout_constraintBottom_toTopOf="@id/hour_temp"
+            app:layout_constraintEnd_toEndOf="@+id/hour_txt"
+            app:layout_constraintStart_toStartOf="@+id/hour_txt"
+            app:layout_constraintTop_toBottomOf="@+id/hour_txt" />
+
+        <TextView
+            android:id="@+id/hour_temp"
+            style="@style/myFontMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="21 c"
+            android:textColor="@color/secondary"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/hour_icon"
+            app:layout_constraintStart_toStartOf="@+id/hour_icon"
+             />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
