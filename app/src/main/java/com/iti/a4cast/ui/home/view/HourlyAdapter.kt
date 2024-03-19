@@ -1,5 +1,6 @@
 package com.iti.a4cast.ui.home.view
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.view.LayoutInflater
@@ -10,8 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.iti.a4cast.data.model.Current
 import com.iti.a4cast.databinding.HourlyItemBinding
 import com.iti.a4cast.util.HomeUtils
+import com.iti.a4cast.util.setTemp
 
-class HourlyAdapter : ListAdapter<Current, HourlyAdapter.ViewHolder>(DiffUtils) {
+class HourlyAdapter(var context: Context) : ListAdapter<Current, HourlyAdapter.ViewHolder>(DiffUtils) {
     class ViewHolder(val binding: HourlyItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,7 +31,7 @@ class HourlyAdapter : ListAdapter<Current, HourlyAdapter.ViewHolder>(DiffUtils) 
         } else {
             "${HomeUtils.timeStampToHour(hourly.dt)}"
         }
-        holder.binding.hourTemp.text = hourly.temp.toInt().toString()
+        holder.binding.hourTemp.setTemp(hourly.temp.toInt(), context)
         holder.binding.hourIcon.setImageResource(HomeUtils.getWeatherIcon(hourly.weather[0].icon))
 
     }

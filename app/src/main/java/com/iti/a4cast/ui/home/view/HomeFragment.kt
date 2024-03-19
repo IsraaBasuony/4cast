@@ -37,6 +37,8 @@ import com.iti.a4cast.databinding.FragmentHomeBinding
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
 import com.iti.a4cast.util.HomeUtils
+import com.iti.a4cast.util.setTemp
+import com.iti.a4cast.util.setWindSpeed
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -67,7 +69,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        hourlyAdapter = HourlyAdapter()
+        hourlyAdapter = HourlyAdapter(requireActivity().applicationContext)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -87,7 +89,7 @@ class HomeFragment : Fragment() {
             HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance()))
         viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
 
-        viewModel.getForecastWeather(30.0333, 31.2333, "standard", "en")
+        viewModel.getForecastWeather(30.0333, 31.2333, "metric", "en")
         lifecycleScope.launch {
 
             viewModel.forecastResponse.collect { res ->
@@ -95,7 +97,7 @@ class HomeFragment : Fragment() {
                 when (res) {
                     is WeatherStatus.Success -> {
 
-                        binding.temperature.text = "${res.data.current?.temp?.toInt()}°"
+                        binding.temperature.setTemp(res.data.current?.temp?.toInt()!!,requireActivity().application)
                         binding.status.text = res.data.current!!.weather[0].description
                         binding.status.setCompoundDrawablesWithIntrinsicBounds(
                             HomeUtils.getWeatherIcon(
@@ -104,11 +106,12 @@ class HomeFragment : Fragment() {
                         )
                         binding.dayMonth.text = HomeUtils.timeStampMonth(res.data.current!!.dt)
                         binding.cloud.text = "${(res.data.current?.clouds)}%"
-                        binding.windSpeed.text = "${(res.data.current?.wind_speed).toString()}m/s"
+                        binding.windSpeed.setWindSpeed(res.data.current!!.wind_speed,requireActivity().application)
                         binding.pressure.text = "${res.data.current?.pressure}hPa"
                         binding.humidity.text = "${res.data.current?.humidity}%"
                         binding.visibility.text = "${(res.data.current?.visibility)?.div(1000.0)}km"
                         binding.uvi.text = "${res.data.current?.uvi}"
+
                         // binding.todayWeatherImg.setImageResource(HomeUtils.getWeatherIcon(res.data.current!!.weather[0].icon!!))
 
                         hourlyAdapter.submitList(res.data.hourly)

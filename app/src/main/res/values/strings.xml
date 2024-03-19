@@ -20,8 +20,24 @@
     <string name="clouds">Clouds</string>
     <string name="visibility">Visibility</string>
     <string name="uvi">UVI</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="meter_per_second">" m/s"</string>
+    <string name="mile_per_hour">" mph"</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="celsius">Celsius</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="gps">GPS</string>
+    <string name="map">MAP</string>
+    <string name="temperature">Temperature</string>
+    <string name="location">Location</string>
+    <string name="language">Language</string>
+    <string name="m">" m"</string>
+    <string name="hpa">" hPa"</string>
+    <string name="c_symbol" translatable="false"><sup>°C</sup></string>
+    <string name="k_symbol" translatable="false"><sup>°K</sup></string>
+    <string name="f_symbol" translatable="false"><sup>°F</sup></string>
 
 
 </resources>

@@ -16,6 +16,8 @@ import com.iti.a4cast.databinding.FragmentDaysBinding
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
 import com.iti.a4cast.util.HomeUtils
+import com.iti.a4cast.util.setTemp
+import com.iti.a4cast.util.setWindSpeed
 import kotlinx.coroutines.launch
 
 class DaysFragment : Fragment() {
@@ -34,7 +36,7 @@ class DaysFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        dailyAdapter = DailyAdapter()
+        dailyAdapter = DailyAdapter(requireActivity().applicationContext)
         _binding = FragmentDaysBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -47,19 +49,19 @@ class DaysFragment : Fragment() {
             HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance()))
         viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
 
-        viewModel.getForecastWeather(30.0333, 31.2333, "standard", "en")
+        viewModel.getForecastWeather(30.0333, 31.2333, "metric", "en")
         lifecycleScope.launch {
 
             viewModel.forecastResponse.collect { res ->
 
                 when (res) {
                     is WeatherStatus.Success -> {
-                        binding.windSpeed.text = "${(res.data.daily[2]?.wind_speed).toString()}m/s"
+                        binding.windSpeed.setWindSpeed(res.data.daily[2]?.wind_speed!!, requireActivity().application)
                         binding.humidity.text = "${res.data.daily[2]?.humidity}%"
                         binding.uvi.text = "${res.data.daily[2]?.uvi}"
 
-                        binding.tomorrowMaxTemp.text=res.data.daily[2].temp.max.toString()
-                        binding.tomorrowMinTemp.text=res.data.daily[2].temp.min.toString()
+                        binding.tomorrowMaxTemp.setTemp(res.data.daily[2].temp.max.toInt(), requireActivity().application)
+                        binding.tomorrowMinTemp.setTemp(res.data.daily[2].temp.min.toInt(), requireActivity().application)
 
                         binding.tomorrowStatus.text=res.data.daily[2].weather[0].description
                         binding.tomorrowStatus.setCompoundDrawablesWithIntrinsicBounds(
