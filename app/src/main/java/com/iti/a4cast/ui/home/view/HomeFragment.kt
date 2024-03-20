@@ -36,9 +36,13 @@ import com.iti.a4cast.data.repo.ForecastRepo
 import com.iti.a4cast.databinding.FragmentHomeBinding
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
+import com.iti.a4cast.ui.settings.SettingsSharedPref
+import com.iti.a4cast.ui.settings.viewmodel.SettingsViewModel
+import com.iti.a4cast.ui.settings.viewmodel.SettingsViewModelFactory
 import com.iti.a4cast.util.HomeUtils
 import com.iti.a4cast.util.setTemp
 import com.iti.a4cast.util.setWindSpeed
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -46,6 +50,10 @@ class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var vmFactory: HomeViewModelFactory
+
+    lateinit var settingsViewModel: SettingsViewModel
+    lateinit var settingsViewModelFactory: SettingsViewModelFactory
+
     lateinit var hourlyAdapter: HourlyAdapter
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -62,6 +70,15 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        vmFactory =
+            HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
+        viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
+
+
+        settingsViewModelFactory =
+            SettingsViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
+        settingsViewModel = ViewModelProvider(this, settingsViewModelFactory)[SettingsViewModel::class.java]
+
     }
 
     override fun onCreateView(
@@ -78,18 +95,21 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        getLastLocation()
         binding.weeklyForecast.setOnClickListener {
-
             Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_daysFragment)
         }
         // img.setImageResource(R.drawable.icon_01n)
-        getLastLocation()
-        vmFactory =
-            HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance()))
-        viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
 
-        viewModel.getForecastWeather(30.0333, 31.2333, "metric", "en")
+
+
+        lifecycleScope.launch(Dispatchers.IO){
+            settingsViewModel.language.collect{
+                viewModel.getForecastWeather(30.0333, 31.2333,  it)
+
+            }
+        }
+
         lifecycleScope.launch {
 
             viewModel.forecastResponse.collect { res ->
@@ -145,6 +165,7 @@ class HomeFragment : Fragment() {
 
 
     fun getLastLocation() {
+        //step1
         if (checkPermissions()) {
             if (isLocationEnabled()) {
                 getFreshLocation()
@@ -214,7 +235,7 @@ class HomeFragment : Fragment() {
 
         val mLocationRequest = com.google.android.gms.location.LocationRequest()
         mLocationRequest.setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY)
-        mLocationRequest.setInterval(200000)
+        mLocationRequest.setInterval(20000)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
         fusedLocationProviderClient.requestLocationUpdates(

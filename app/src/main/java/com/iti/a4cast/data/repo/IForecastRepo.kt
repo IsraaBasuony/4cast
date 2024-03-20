@@ -4,5 +4,13 @@ import com.iti.a4cast.data.model.ForecastResponse
 import kotlinx.coroutines.flow.Flow
 
 interface IForecastRepo {
-   suspend fun getForecastWeather(lat:Double, lon:Double,unit:String,lang:String): Flow<ForecastResponse>
+    fun getForecastWeather(
+        lat: Double,
+        lon: Double,
+        lang: String
+    ): Flow<ForecastResponse>
+
+    fun getLanguage(): String
+
+    fun setLanguage(language: String)
 }

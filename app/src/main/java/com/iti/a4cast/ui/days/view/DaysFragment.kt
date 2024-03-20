@@ -15,9 +15,13 @@ import com.iti.a4cast.data.repo.ForecastRepo
 import com.iti.a4cast.databinding.FragmentDaysBinding
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
+import com.iti.a4cast.ui.settings.SettingsSharedPref
+import com.iti.a4cast.ui.settings.viewmodel.SettingsViewModel
+import com.iti.a4cast.ui.settings.viewmodel.SettingsViewModelFactory
 import com.iti.a4cast.util.HomeUtils
 import com.iti.a4cast.util.setTemp
 import com.iti.a4cast.util.setWindSpeed
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DaysFragment : Fragment() {
@@ -27,8 +31,22 @@ class DaysFragment : Fragment() {
     lateinit var dailyAdapter: DailyAdapter
     private lateinit var viewModel: HomeViewModel
     private lateinit var vmFactory: HomeViewModelFactory
+
+    lateinit var settingsViewModel: SettingsViewModel
+    lateinit var settingsViewModelFactory: SettingsViewModelFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        vmFactory =
+            HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
+        viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
+
+
+        settingsViewModelFactory =
+            SettingsViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
+        settingsViewModel = ViewModelProvider(this, settingsViewModelFactory)[SettingsViewModel::class.java]
+
 
     }
 
@@ -45,11 +63,12 @@ class DaysFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        vmFactory =
-            HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance()))
-        viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
+        lifecycleScope.launch(Dispatchers.IO){
+            settingsViewModel.language.collect{
+                viewModel.getForecastWeather(30.0333, 31.2333,  it)
 
-        viewModel.getForecastWeather(30.0333, 31.2333, "metric", "en")
+            }
+        }
         lifecycleScope.launch {
 
             viewModel.forecastResponse.collect { res ->

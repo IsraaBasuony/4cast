@@ -3,6 +3,8 @@ package com.iti.a4cast.util
 import android.app.Application
 import android.content.Context
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import com.iti.a4cast.R
 import com.iti.a4cast.ui.settings.SettingsSharedPref
 import java.text.DateFormat
@@ -46,22 +48,30 @@ class HomeUtils {
         }
 
 
-    fun timeStampMonth(dt: Long): String {
-        val date = Date(dt * 1000)
-        val dateFormat: DateFormat = SimpleDateFormat("EEE, dd MMM")
-        return dateFormat.format(date)
-    }
+        fun timeStampMonth(dt: Long): String {
+            val date = Date(dt * 1000)
+            val dateFormat: DateFormat = SimpleDateFormat("EEE, dd MMM")
+            return dateFormat.format(date)
+        }
 
-    fun getDayFormat(dt: Long):String {
-        val date = Date(dt * 1000)
-        val dateFormat: DateFormat = SimpleDateFormat("EEE")
-        return dateFormat.format(date)
+        fun getDayFormat(dt: Long): String {
+            val date = Date(dt * 1000)
+            val dateFormat: DateFormat = SimpleDateFormat("EEE")
+            return dateFormat.format(date)
+        }
+
+
+        fun setLanguageLocale(lan: String) {
+            val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(lan)
+            AppCompatDelegate.setApplicationLocales(appLocale)
+        }
+
+        fun getLanguageLocale(): String {
+            return AppCompatDelegate.getApplicationLocales().toLanguageTags()
+        }
     }
 }
 
-
-
-}
 
 
 fun TextView.setWindSpeed(windSpeed: Double, application: Application) {
@@ -91,14 +101,17 @@ fun TextView.setTemp(temp: Int, context: Context) {
             symbol = context.getString(R.string.c_symbol)
             temp
         }
+
         SettingsSharedPref.FAHRENHEIT -> {
             symbol = context.getString(R.string.f_symbol)
             (((temp) * 9.0 / 5) + 32).roundToInt()
         }
+
         SettingsSharedPref.KELVIN -> {
             symbol = context.getString(R.string.k_symbol)
             (temp) + 273
         }
+
         else -> {
             symbol = context.getString(R.string.c_symbol)
             temp
@@ -109,5 +122,8 @@ fun TextView.setTemp(temp: Int, context: Context) {
         append(" ")
         append(symbol)
     }
+
+
+
 }
 

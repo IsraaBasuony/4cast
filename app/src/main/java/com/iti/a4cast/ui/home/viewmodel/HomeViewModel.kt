@@ -16,9 +16,9 @@ class HomeViewModel (private val _iRepo: IForecastRepo) :ViewModel(){
     val forecastResponse = _forecastResponse
 
 
-   fun getForecastWeather(lat:Double , lon:Double , unit:String,lang:String  ){
+   fun getForecastWeather(lat:Double , lon:Double,lang:String  ){
         viewModelScope.launch(Dispatchers.IO) {
-            _iRepo.getForecastWeather(lat, lon,unit, lang).collect{
+            _iRepo.getForecastWeather(lat, lon, lang).collect{
                 _forecastResponse.value = WeatherStatus.Success(it)
             }
 

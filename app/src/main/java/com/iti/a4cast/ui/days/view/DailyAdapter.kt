@@ -23,11 +23,11 @@ class DailyAdapter(var context: Context) : ListAdapter<Daily, DailyAdapter.ViewH
 
         val daily = getItem(position)
 
-            holder.binding.dayMaxTemp.setTemp(daily.temp.max.toInt(),context)
-            holder.binding.dayMinTemp.setTemp(daily.temp.min.toInt(),context)
-            holder.binding.dayStatus.text = daily.weather[0].description
-            holder.binding.dayIcon.setImageResource(HomeUtils.getWeatherIcon(daily.weather[0].icon))
-            holder.binding.dayTxt.text= HomeUtils.getDayFormat(daily.dt)
+        holder.binding.dayMaxTemp.setTemp(daily.temp.max.toInt(), context)
+        holder.binding.dayStatus.text = daily.weather[0].description
+        holder.binding.dayIcon.setImageResource(HomeUtils.getWeatherIcon(daily.weather[0].icon))
+        holder.binding.dayTxt.text = HomeUtils.getDayFormat(daily.dt)
+        holder.binding.dayMinTemp.setTemp(daily.temp.min.toInt(), context)
 
     }
 
