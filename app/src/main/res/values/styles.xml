@@ -10,7 +10,7 @@
     </style>
 
     <style name="myFontMedium">
-        <item name="android:fontFamily">@font/medium</item>
+        <item name="android:fontFamily">@font/meduim</item>
     </style>
 
     <style name="myFontSemiDold">

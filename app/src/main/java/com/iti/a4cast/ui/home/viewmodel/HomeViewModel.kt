@@ -25,4 +25,12 @@ class HomeViewModel (private val _iRepo: IForecastRepo) :ViewModel(){
         }
     }
 
+    fun  getLanguage():String{
+        return _iRepo.getLanguage()
+    }
+
+    fun setLanguage(language:String){
+        _iRepo.setLanguage(language)
+    }
+
 }

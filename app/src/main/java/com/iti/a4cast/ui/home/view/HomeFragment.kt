@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -13,7 +12,6 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -37,12 +35,9 @@ import com.iti.a4cast.databinding.FragmentHomeBinding
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
 import com.iti.a4cast.ui.settings.SettingsSharedPref
-import com.iti.a4cast.ui.settings.viewmodel.SettingsViewModel
-import com.iti.a4cast.ui.settings.viewmodel.SettingsViewModelFactory
 import com.iti.a4cast.util.HomeUtils
 import com.iti.a4cast.util.setTemp
 import com.iti.a4cast.util.setWindSpeed
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -51,13 +46,10 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var vmFactory: HomeViewModelFactory
 
-    lateinit var settingsViewModel: SettingsViewModel
-    lateinit var settingsViewModelFactory: SettingsViewModelFactory
 
-    lateinit var hourlyAdapter: HourlyAdapter
+    private lateinit var hourlyAdapter: HourlyAdapter
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    lateinit var img: ImageView
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -75,9 +67,6 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
 
 
-        settingsViewModelFactory =
-            SettingsViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
-        settingsViewModel = ViewModelProvider(this, settingsViewModelFactory)[SettingsViewModel::class.java]
 
     }
 
@@ -102,13 +91,8 @@ class HomeFragment : Fragment() {
         // img.setImageResource(R.drawable.icon_01n)
 
 
-
-        lifecycleScope.launch(Dispatchers.IO){
-            settingsViewModel.language.collect{
-                viewModel.getForecastWeather(30.0333, 31.2333,  it)
-
-            }
-        }
+        val language = viewModel.getLanguage()
+                viewModel.getForecastWeather(30.0333, 31.2333, viewModel.getLanguage())
 
         lifecycleScope.launch {
 
@@ -121,10 +105,10 @@ class HomeFragment : Fragment() {
                         binding.status.text = res.data.current!!.weather[0].description
                         binding.status.setCompoundDrawablesWithIntrinsicBounds(
                             HomeUtils.getWeatherIcon(
-                                res.data.current!!.weather[0].icon!!
+                                res.data.current!!.weather[0].icon
                             ), 0, 0, 0
                         )
-                        binding.dayMonth.text = HomeUtils.timeStampMonth(res.data.current!!.dt)
+                        binding.dayMonth.text = HomeUtils.timeStampMonth(res.data.current!!.dt, language)
                         binding.cloud.text = "${(res.data.current?.clouds)}%"
                         binding.windSpeed.setWindSpeed(res.data.current!!.wind_speed,requireActivity().application)
                         binding.pressure.text = "${res.data.current?.pressure}hPa"
@@ -248,7 +232,7 @@ class HomeFragment : Fragment() {
                     longitude = location?.longitude!!.toDouble()
                     latitude = location?.latitude!!.toDouble()
 
-                    getTextLocation(location!!.latitude, location.longitude)
+                  //  getTextLocation(location!!.latitude, location.longitude)
                     //fusedLocationProviderClient.removeLocationUpdates(this)
                 }
             },
@@ -256,12 +240,12 @@ class HomeFragment : Fragment() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun getTextLocation(latitude: Double, longitude: Double) {
-        val geocoder = Geocoder(requireActivity().applicationContext)
+  //  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    /*fun getTextLocation(latitude: Double, longitude: Double) {
+       // val geocoder = Geocoder(requireActivity().applicationContext)
 
         try {
-            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            //val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
             if (addresses!!.isNotEmpty()) {
                 val address = "${addresses[0].locality}, ${addresses[0].countryName}"
@@ -272,7 +256,7 @@ class HomeFragment : Fragment() {
         } catch (e: Exception) {
             binding.locationTxt.text = "Error retrieving address"
         }
-    }
+    }*/
 
 
 }

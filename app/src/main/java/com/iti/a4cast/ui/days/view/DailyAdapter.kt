@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.iti.a4cast.data.model.Daily
 import com.iti.a4cast.databinding.DailyItemBinding
+import com.iti.a4cast.ui.settings.SettingsSharedPref
 import com.iti.a4cast.util.HomeUtils
 import com.iti.a4cast.util.setTemp
 
@@ -26,7 +27,7 @@ class DailyAdapter(var context: Context) : ListAdapter<Daily, DailyAdapter.ViewH
         holder.binding.dayMaxTemp.setTemp(daily.temp.max.toInt(), context)
         holder.binding.dayStatus.text = daily.weather[0].description
         holder.binding.dayIcon.setImageResource(HomeUtils.getWeatherIcon(daily.weather[0].icon))
-        holder.binding.dayTxt.text = HomeUtils.getDayFormat(daily.dt)
+        holder.binding.dayTxt.text = HomeUtils.getDayFormat(daily.dt, SettingsSharedPref.getInstance(context).getLanguagePref())
         holder.binding.dayMinTemp.setTemp(daily.temp.min.toInt(), context)
 
     }

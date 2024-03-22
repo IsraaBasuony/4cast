@@ -16,24 +16,19 @@ import com.iti.a4cast.databinding.FragmentDaysBinding
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
 import com.iti.a4cast.ui.settings.SettingsSharedPref
-import com.iti.a4cast.ui.settings.viewmodel.SettingsViewModel
-import com.iti.a4cast.ui.settings.viewmodel.SettingsViewModelFactory
 import com.iti.a4cast.util.HomeUtils
 import com.iti.a4cast.util.setTemp
 import com.iti.a4cast.util.setWindSpeed
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DaysFragment : Fragment() {
 
     private var _binding: FragmentDaysBinding? = null
     private val binding get() = _binding!!
-    lateinit var dailyAdapter: DailyAdapter
+    private lateinit var dailyAdapter: DailyAdapter
     private lateinit var viewModel: HomeViewModel
     private lateinit var vmFactory: HomeViewModelFactory
 
-    lateinit var settingsViewModel: SettingsViewModel
-    lateinit var settingsViewModelFactory: SettingsViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +36,6 @@ class DaysFragment : Fragment() {
         vmFactory =
             HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
         viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
-
-
-        settingsViewModelFactory =
-            SettingsViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
-        settingsViewModel = ViewModelProvider(this, settingsViewModelFactory)[SettingsViewModel::class.java]
-
 
     }
 
@@ -63,21 +52,17 @@ class DaysFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        lifecycleScope.launch(Dispatchers.IO){
-            settingsViewModel.language.collect{
-                viewModel.getForecastWeather(30.0333, 31.2333,  it)
+        viewModel.getForecastWeather(30.0333, 31.2333, viewModel.getLanguage())
 
-            }
-        }
-        lifecycleScope.launch {
+        lifecycleScope.launch{
 
             viewModel.forecastResponse.collect { res ->
 
                 when (res) {
                     is WeatherStatus.Success -> {
-                        binding.windSpeed.setWindSpeed(res.data.daily[2]?.wind_speed!!, requireActivity().application)
-                        binding.humidity.text = "${res.data.daily[2]?.humidity}%"
-                        binding.uvi.text = "${res.data.daily[2]?.uvi}"
+                        binding.windSpeed.setWindSpeed(res.data.daily[2].wind_speed, requireActivity().application)
+                        binding.humidity.text = "${res.data.daily[2].humidity}%"
+                        binding.uvi.text = "${res.data.daily[2].uvi}"
 
                         binding.tomorrowMaxTemp.setTemp(res.data.daily[2].temp.max.toInt(), requireActivity().application)
                         binding.tomorrowMinTemp.setTemp(res.data.daily[2].temp.min.toInt(), requireActivity().application)
@@ -85,10 +70,10 @@ class DaysFragment : Fragment() {
                         binding.tomorrowStatus.text=res.data.daily[2].weather[0].description
                         binding.tomorrowStatus.setCompoundDrawablesWithIntrinsicBounds(
                             HomeUtils.getWeatherIcon(
-                                res.data.daily[2]!!.weather[0].icon!!
+                                res.data.daily[2].weather[0].icon
                             ), 0, 0, 0
                         )
-                        binding.tomorrowWeatherImg.setImageResource(HomeUtils.getWeatherIcon(res.data.daily[2]!!.weather[0].icon!!))
+                        binding.tomorrowWeatherImg.setImageResource(HomeUtils.getWeatherIcon(res.data.daily[2].weather[0].icon))
                         dailyAdapter.submitList(res.data.daily.subList(2, 8))
                         binding.homeRecycleDays.apply {
                             adapter = dailyAdapter

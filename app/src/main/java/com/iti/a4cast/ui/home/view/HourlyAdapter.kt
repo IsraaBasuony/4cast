@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.iti.a4cast.data.model.Current
 import com.iti.a4cast.databinding.HourlyItemBinding
+import com.iti.a4cast.ui.settings.SettingsSharedPref
 import com.iti.a4cast.util.HomeUtils
 import com.iti.a4cast.util.setTemp
 
@@ -29,7 +30,7 @@ class HourlyAdapter(var context: Context) : ListAdapter<Current, HourlyAdapter.V
             holder.binding.hourTxt.setTypeface(null, Typeface.BOLD)
             "Now"
         } else {
-            "${HomeUtils.timeStampToHour(hourly.dt)}"
+            "${HomeUtils.timeStampToHour(hourly.dt, SettingsSharedPref.getInstance(context).getLanguagePref())}"
         }
         holder.binding.hourTemp.setTemp(hourly.temp.toInt(), context)
         holder.binding.hourIcon.setImageResource(HomeUtils.getWeatherIcon(hourly.weather[0].icon))

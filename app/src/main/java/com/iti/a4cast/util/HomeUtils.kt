@@ -2,14 +2,14 @@ package com.iti.a4cast.util
 
 import android.app.Application
 import android.content.Context
+import android.content.res.Configuration
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import com.iti.a4cast.R
 import com.iti.a4cast.ui.settings.SettingsSharedPref
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import kotlin.math.roundToInt
 
 class HomeUtils {
@@ -41,36 +41,39 @@ class HomeUtils {
             return imageInInteger
         }
 
-        fun timeStampToHour(dt: Long): String {
+        fun timeStampToHour(dt: Long, lang :String): String {
             var date: Date = Date(dt * 1000)
-            var dateFormat: DateFormat = SimpleDateFormat("h:mm aa")
+            var dateFormat: DateFormat = SimpleDateFormat("h:mm aa", Locale( lang) )
             return dateFormat.format(date)
         }
 
 
-        fun timeStampMonth(dt: Long): String {
+        fun timeStampMonth(dt: Long, lang :String): String {
             val date = Date(dt * 1000)
-            val dateFormat: DateFormat = SimpleDateFormat("EEE, dd MMM")
+            val dateFormat: DateFormat = SimpleDateFormat("EEE, dd MMM", Locale(lang))
             return dateFormat.format(date)
         }
 
-        fun getDayFormat(dt: Long): String {
+        fun getDayFormat(dt: Long, lang :String): String {
             val date = Date(dt * 1000)
-            val dateFormat: DateFormat = SimpleDateFormat("EEE")
+            val dateFormat: DateFormat = SimpleDateFormat("EEE", Locale(lang))
             return dateFormat.format(date)
         }
 
 
-        fun setLanguageLocale(lan: String) {
-            val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(lan)
-            AppCompatDelegate.setApplicationLocales(appLocale)
-        }
 
-        fun getLanguageLocale(): String {
-            return AppCompatDelegate.getApplicationLocales().toLanguageTags()
-        }
+
+    fun changeLanguage(language: String, context: Context) {
+
+        val newLocale = Locale(language)
+        Locale.setDefault(newLocale)
+        val configuration = Configuration()
+        configuration.setLocale(newLocale)
+        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+    }
     }
 }
+
 
 
 
@@ -122,6 +125,8 @@ fun TextView.setTemp(temp: Int, context: Context) {
         append(" ")
         append(symbol)
     }
+
+
 
 
 
