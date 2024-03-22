@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -240,12 +241,12 @@ class HomeFragment : Fragment() {
         )
     }
 
-  //  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    /*fun getTextLocation(latitude: Double, longitude: Double) {
-       // val geocoder = Geocoder(requireActivity().applicationContext)
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun getTextLocation(latitude: Double, longitude: Double) {
+        val geocoder = Geocoder(requireActivity().applicationContext)
 
         try {
-            //val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
             if (addresses!!.isNotEmpty()) {
                 val address = "${addresses[0].locality}, ${addresses[0].countryName}"
@@ -256,7 +257,7 @@ class HomeFragment : Fragment() {
         } catch (e: Exception) {
             binding.locationTxt.text = "Error retrieving address"
         }
-    }*/
+    }
 
 
 }

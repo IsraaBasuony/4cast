@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">4cast</string>
+    <string name="menu_home">Home</string>
+    <string name="favorite">المفضلة</string>
+    <string name="settings">الاعدادات</string>
+    <string name="alerts">Alerts</string>
+    <string name="open_drawer">Open Drawer</string>
+    <string name="close_drawer">Close Drawer</string>
+    <string name="home">Home</string>
+    <string name="wind_speed">Wind speed</string>
+    <string name="pressure">الضغط</string>
+    <string name="humidity">Humidity</string>
+    <string name="sunday">الأحد</string>
+    <string name="monday">الاثنين</string>
+    <string name="tuesday">الثلاثاء</string>
+    <string name="wednesday">الأربعاء</string>
+    <string name="thursday">الخميس</string>
+    <string name="friday">الجمعة</string>
+    <string name="saturday">السبت</string>
+    <string name="clouds">Clouds</string>
+    <string name="visibility">Visibility</string>
+    <string name="uvi">UVI</string>
+    <string name="meter_per_second">" m/s"</string>
+    <string name="mile_per_hour">" mph"</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="celsius">Celsius</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="english">English</string>
+    <string name="arabic">العربية</string>
+    <string name="gps">GPS</string>
+    <string name="map">MAP</string>
+    <string name="temperature">Temperature</string>
+    <string name="location">Location</string>
+    <string name="language">Language</string>
+    <string name="m">" m"</string>
+    <string name="hpa">" hPa"</string>
+    <string name="c_symbol" translatable="false"><sup>°C</sup></string>
+    <string name="k_symbol" translatable="false"><sup>°K</sup></string>
+    <string name="f_symbol" translatable="false"><sup>°F</sup></string>
+</resources>
