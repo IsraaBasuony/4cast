@@ -8,6 +8,7 @@ private const val SETTINGS_SH_PREF = "SETTINGS_SHARED_PREFERENCES"
 private const val TEMP_PREF = "TEMP_PREF"
 private const val WIND_SPEED_PREF = "WIND_SPEED_PREF"
 private const val LANGUAGE_PREF = "LANGUAGE_PREF"
+private const val LOCATION_PREF = "LOCATION_PREF"
 
 
 class SettingsSharedPref private constructor(applicationContext: Context) {
@@ -23,6 +24,14 @@ class SettingsSharedPref private constructor(applicationContext: Context) {
 
     fun getTempPref(): String? {
         return sharedPreferences.getString(TEMP_PREF, CELSIUS)
+    }
+
+    fun setLocationPref(locationPref: String) {
+        editor.putString(LOCATION_PREF, locationPref).apply()
+    }
+
+    fun getLocationPref(): String? {
+        return sharedPreferences.getString(LOCATION_PREF, GPS)
     }
 
     fun setLanguagePref(language: String) {
@@ -53,6 +62,8 @@ class SettingsSharedPref private constructor(applicationContext: Context) {
         const val FAHRENHEIT = "FAHRENHEIT"
 
 
+        const val GPS = "GPS"
+        const val  MAP = "MAP"
 
         private var instance: SettingsSharedPref? = null
 

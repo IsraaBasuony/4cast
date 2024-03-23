@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import com.iti.a4cast.MainActivity
 import com.iti.a4cast.R
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
 import com.iti.a4cast.data.repo.ForecastRepo
@@ -48,23 +49,13 @@ class SettingFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity(), vmFactory)[HomeViewModel::class.java]
 
 
-        if (viewModel.getLanguage() == "en") binding.radioButtonEnglish.toggle()
-        else binding.radioButtonArabic.toggle()
+        setUpButtons()
+        handleClicks()
 
 
-        when (settingSharedPref.getWindSpeedPref()) {
-            SettingsSharedPref.METER_PER_SECOND -> binding.radioButtonMPerSec.toggle()
-            SettingsSharedPref.MILE_PER_HOUR -> binding.radioButtonMilePerHour.toggle()
-        }
+    }
 
-        when (settingSharedPref.getTempPref()) {
-            SettingsSharedPref.CELSIUS -> binding.radioButtonC.toggle()
-            SettingsSharedPref.KELVIN -> binding.radioButtonK.toggle()
-            SettingsSharedPref.FAHRENHEIT -> binding.radioButtonF.toggle()
-        }
-
-
-
+    private fun handleClicks() {
         binding.radioGroupChooseLanguage.setOnCheckedChangeListener { _, checked ->
             when (checked) {
 
@@ -79,21 +70,25 @@ class SettingFragment : Fragment() {
                 }
             }
             Log.i("Lang", "getLanguagVMe: ${viewModel.getLanguage()}")
-restartActivity()
+            restartActivity()
 
 
         }
         binding.radioGroupLocation.setOnCheckedChangeListener { _, checked ->
             when (checked) {
-                //R.id.radio_button_GPS -> {
+                R.id.radio_button_GPS -> {
+                    settingSharedPref.setLocationPref(SettingsSharedPref.GPS)
+                    Toast.makeText(
+                        requireContext(),
+                        "Settings is changed Successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
                 R.id.radio_button_map -> {
                     Navigation.findNavController(binding.root)
                         .navigate(R.id.action_settingFragment_to_settingMapFragment)
                 }
-
-                //map
-
             }
         }
         binding.radioGroupWindSpeed.setOnCheckedChangeListener { _, checked ->
@@ -158,20 +153,37 @@ restartActivity()
                 }
             }
         }
-
-
     }
 
+    private fun setUpButtons() {
+        when (settingSharedPref.getLanguagePref()) {
+            SettingsSharedPref.ENGLIGH -> binding.radioButtonEnglish.toggle()
+            SettingsSharedPref.ARABIC -> binding.radioButtonArabic.toggle()
+        }
 
 
-    private  fun restartActivity(){
-        val intent = requireActivity().packageManager.getLaunchIntentForPackage(requireActivity().packageName)
-        intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        requireActivity().finish()
-        if (intent != null) {
-            startActivity(intent)
+        when (settingSharedPref.getWindSpeedPref()) {
+            SettingsSharedPref.METER_PER_SECOND -> binding.radioButtonMPerSec.toggle()
+            SettingsSharedPref.MILE_PER_HOUR -> binding.radioButtonMilePerHour.toggle()
+        }
+
+
+        when (settingSharedPref.getLocationPref()) {
+            SettingsSharedPref.GPS -> binding.radioButtonGPS.toggle()
+            SettingsSharedPref.MAP -> binding.radioButtonMap.toggle()
+        }
+
+        when (settingSharedPref.getTempPref()) {
+            SettingsSharedPref.CELSIUS -> binding.radioButtonC.toggle()
+            SettingsSharedPref.KELVIN -> binding.radioButtonK.toggle()
+            SettingsSharedPref.FAHRENHEIT -> binding.radioButtonF.toggle()
         }
     }
 
-
+    private fun restartActivity() {
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        requireActivity().finish()
+        startActivity(intent)
+    }
 }

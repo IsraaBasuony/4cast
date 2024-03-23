@@ -3,6 +3,9 @@ package com.iti.a4cast.util
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
+import android.location.Address
+import android.location.Geocoder
+import android.os.Build
 import android.widget.TextView
 import com.iti.a4cast.R
 import com.iti.a4cast.ui.settings.SettingsSharedPref
@@ -41,40 +44,62 @@ class HomeUtils {
             return imageInInteger
         }
 
-        fun timeStampToHour(dt: Long, lang :String): String {
-            var date: Date = Date(dt * 1000)
-            var dateFormat: DateFormat = SimpleDateFormat("h:mm aa", Locale( lang) )
+        fun timeStampToHour(dt: Long, lang: String): String {
+            var date= Date(dt * 1000)
+            var dateFormat: DateFormat = SimpleDateFormat("h:mm aa", Locale(lang))
             return dateFormat.format(date)
         }
 
 
-        fun timeStampMonth(dt: Long, lang :String): String {
+        fun timeStampMonth(dt: Long, lang: String): String {
             val date = Date(dt * 1000)
             val dateFormat: DateFormat = SimpleDateFormat("EEE, dd MMM", Locale(lang))
             return dateFormat.format(date)
         }
 
-        fun getDayFormat(dt: Long, lang :String): String {
+        fun getDayFormat(dt: Long, lang: String): String {
             val date = Date(dt * 1000)
             val dateFormat: DateFormat = SimpleDateFormat("EEE", Locale(lang))
             return dateFormat.format(date)
         }
 
 
+        fun changeLanguage(language: String, context: Context) {
+            val newLocale = Locale(language)
+            Locale.setDefault(newLocale)
+            val configuration = Configuration()
+            configuration.setLocale(newLocale)
+            context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+        }
 
 
-    fun changeLanguage(language: String, context: Context) {
+        fun getLocationAddress(context: Context, long: Double, lat: Double, onResult: (Address?) -> Unit) {
+            var address: Address?
+            val geocoder = Geocoder(context)
 
-        val newLocale = Locale(language)
-        Locale.setDefault(newLocale)
-        val configuration = Configuration()
-        configuration.setLocale(newLocale)
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-    }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                geocoder.getFromLocation(lat, long, 1) {
+                    address = it[0]
+                    onResult(address)
+                }
+            } else {
+                val addressList = geocoder.getFromLocation(lat, long, 1)
+                if (!addressList.isNullOrEmpty()) {
+                    address = geocoder.getFromLocation(lat, long, 1)?.get(0)
+                    onResult(address)
+                } else {
+                    onResult(null)
+                }
+
+            }
+        }
+        fun getAddressFormat(address: Address?): String {
+            return address?.let {
+                if (it.subAdminArea != null) { " ${it.subAdminArea}" }
+                else { it.adminArea } }?:""
+        }
     }
 }
-
-
 
 
 fun TextView.setWindSpeed(windSpeed: Double, application: Application) {
@@ -85,6 +110,7 @@ fun TextView.setWindSpeed(windSpeed: Double, application: Application) {
                 append(windSpeed.roundToInt().toString())
                 append(application.getString(R.string.meter_per_second))
             }
+
         SettingsSharedPref.MILE_PER_HOUR -> text = buildString {
             append(getWindSpeedInMilesPerHour(windSpeed).roundToInt().toString())
             append(application.getString(R.string.mile_per_hour))
@@ -125,9 +151,6 @@ fun TextView.setTemp(temp: Int, context: Context) {
         append(" ")
         append(symbol)
     }
-
-
-
 
 
 }

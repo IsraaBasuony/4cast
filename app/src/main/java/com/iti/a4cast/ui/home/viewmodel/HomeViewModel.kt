@@ -7,6 +7,7 @@ import com.iti.a4cast.data.model.ForecastResponse
 import com.iti.a4cast.data.repo.IForecastRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 private const val TAG = "Home"
@@ -18,10 +19,9 @@ class HomeViewModel (private val _iRepo: IForecastRepo) :ViewModel(){
 
    fun getForecastWeather(lat:Double , lon:Double,lang:String  ){
         viewModelScope.launch(Dispatchers.IO) {
-            _iRepo.getForecastWeather(lat, lon, lang).collect{
+            _iRepo.getForecastWeather(lat, lon, lang).collectLatest{
                 _forecastResponse.value = WeatherStatus.Success(it)
             }
-
         }
     }
 

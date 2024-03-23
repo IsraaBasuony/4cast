@@ -16,10 +16,9 @@ import com.iti.a4cast.ui.settings.SettingsSharedPref
 import com.iti.a4cast.util.HomeUtils
 
 class MainActivity : AppCompatActivity(){
-   private lateinit var binding: ActivityMainBinding
-    lateinit var navController: NavController
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +39,9 @@ class MainActivity : AppCompatActivity(){
                 R.id.homeFragment, R.id.favouriteFragment, R.id.alertFragment, R.id.settingFragment
             ), binding.drawerLayout
         )
-         //appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
+        //appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
 
-       findViewById<Toolbar>(R.id.toolbar).setupWithNavController(navController, appBarConfiguration)
+        findViewById<Toolbar>(R.id.toolbar).setupWithNavController(navController, appBarConfiguration)
 
         binding.navigationView.setupWithNavController(navController)
         val color = ContextCompat.getColor(this, R.color.secondary)
