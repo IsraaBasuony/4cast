@@ -9,6 +9,9 @@ private const val TEMP_PREF = "TEMP_PREF"
 private const val WIND_SPEED_PREF = "WIND_SPEED_PREF"
 private const val LANGUAGE_PREF = "LANGUAGE_PREF"
 private const val LOCATION_PREF = "LOCATION_PREF"
+private const val LATITUDE_PREF = "LATITUDE_PREF"
+private const val LONGITUDE_PREF = "LONGITUDE_PREF"
+
 
 
 class SettingsSharedPref private constructor(applicationContext: Context) {
@@ -17,6 +20,23 @@ class SettingsSharedPref private constructor(applicationContext: Context) {
 
     private val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
+
+    fun setLatitudePref(latitudePref: Double) {
+        editor.putString(LATITUDE_PREF, latitudePref.toString()).apply()
+    }
+
+    fun getLatitudePref(): String? {
+        return sharedPreferences.getString(LATITUDE_PREF, "0.0")
+    }
+
+
+    fun setLongitudePref(longitudePref: Double) {
+        editor.putString(LONGITUDE_PREF, longitudePref.toString()).apply()
+    }
+
+    fun getLongitudePref(): String? {
+        return sharedPreferences.getString(LONGITUDE_PREF, "0.0")
+    }
 
     fun setTempPref(tempPref: String) {
         editor.putString(TEMP_PREF, tempPref).apply()

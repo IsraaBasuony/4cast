@@ -1,5 +1,8 @@
 package com.iti.a4cast.data.model
 
+import android.os.Parcel
+import android.os.Parcelable
+
 data class ForecastResponse(
     var id: Int,
     val lat: Double,
@@ -63,7 +66,47 @@ data class Daily(
     val clouds: Long,
     val pop: Double,
     val uvi: Double
-)
+):Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readDouble(),
+        TODO("temp"),
+        TODO("feelsLike"),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readDouble(),
+        parcel.readDouble(),
+        parcel.readLong(),
+        parcel.readDouble(),
+        TODO("weather"),
+        parcel.readLong(),
+        parcel.readDouble(),
+        parcel.readDouble()
+    ) {
+    }
+
+    override fun describeContents(): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun writeToParcel(p0: Parcel, p1: Int) {
+        TODO("Not yet implemented")
+    }
+
+    companion object CREATOR : Parcelable.Creator<Daily> {
+        override fun createFromParcel(parcel: Parcel): Daily {
+            return Daily(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Daily?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
 
 data class FeelsLike(
     val day: Double,

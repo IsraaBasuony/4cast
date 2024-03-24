@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import com.iti.a4cast.MainActivity
+import com.iti.a4cast.MapActivity
 import com.iti.a4cast.R
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
 import com.iti.a4cast.data.repo.ForecastRepo
@@ -86,8 +86,8 @@ class SettingFragment : Fragment() {
                 }
 
                 R.id.radio_button_map -> {
-                    Navigation.findNavController(binding.root)
-                        .navigate(R.id.action_settingFragment_to_settingMapFragment)
+                    settingSharedPref.setLocationPref(SettingsSharedPref.MAP)
+                    startActivity(Intent(requireActivity(), MapActivity::class.java))
                 }
             }
         }

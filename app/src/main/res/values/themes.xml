@@ -3,7 +3,10 @@
     <style name="Base.Theme._4cast" parent="Theme.Material3.DayNight.NoActionBar">
     </style>
 
-    <style name="Theme._4cast" parent="Base.Theme._4cast" />
+    <style name="Theme._4cast" parent="Base.Theme._4cast">
+        <item name="android:windowDisablePreview">true</item>
+
+    </style>
 
 
 </resources>

@@ -1,20 +1,17 @@
 package com.iti.a4cast.ui.home.view
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
@@ -25,10 +22,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.Task
 import com.iti.a4cast.R
 import com.iti.a4cast.data.WeatherStatus
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
@@ -51,11 +56,16 @@ class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var vmFactory: HomeViewModelFactory
-
     private val _location = MutableStateFlow<Pair<Double, Double>>(0.0 to 0.0)
     val location = _location.asStateFlow()
     private lateinit var hourlyAdapter: HourlyAdapter
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    lateinit var sheredPref: SettingsSharedPref
+
+    private val PERMISSION_ID = 1005
+
+    lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var mLocationCallback: LocationCallback
+    lateinit var mLocationRequest: LocationRequest
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -70,8 +80,17 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vmFactory =
-            HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
+            HomeViewModelFactory(
+                ForecastRepo.getInstant(
+                    ForecastRemoteDataSource.getInstance(),
+                    SettingsSharedPref.getInstance(requireActivity())
+                )
+            )
         viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
+
+        sheredPref = SettingsSharedPref.getInstance(requireContext())
+
+        initLocation()
 
     }
 
@@ -89,17 +108,17 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.weeklyForecast.setOnClickListener {
-            Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_daysFragment)
-        }
+
         // img.setImageResource(R.drawable.icon_01n)
 
         val language = viewModel.getLanguage()
 
-        if (SettingsSharedPref.getInstance(requireContext()).getLocationPref() == SettingsSharedPref.GPS){
-            getLastLocation()
+        if (SettingsSharedPref.getInstance(requireContext())
+                .getLocationPref() == SettingsSharedPref.GPS
+        ) {
+            checkPermissions()
             lifecycleScope.launch {
-              location.collectLatest {
+                location.collectLatest {
                     viewModel.getForecastWeather(it.first, it.second, language)
                     latitude = it.first
                     longitude = it.second
@@ -107,6 +126,12 @@ class HomeFragment : Fragment() {
 
                 }
             }
+        } else {
+            viewModel.getForecastWeather(
+                sheredPref.getLatitudePref()!!.toDouble(),
+                sheredPref.getLongitudePref()!!.toDouble(),
+                sheredPref.getLanguagePref()
+            )
         }
 
         lifecycleScope.launch {
@@ -143,12 +168,12 @@ class HomeFragment : Fragment() {
 
                             HomeUtils.getLocationAddress(
                                 requireContext(),
-                                latitude,
-                                longitude,
+                                res.data.lat,
+                                res.data.lon,
                             ) { address ->
 
                                 binding.locationTxt.text =
-                                address?.let { it1 -> HomeUtils.getAddressFormat(it1) }
+                                    address?.let { it1 -> HomeUtils.getAddressFormat(it1) }
                             }
 
 
@@ -179,24 +204,80 @@ class HomeFragment : Fragment() {
 
         }
 
-    }
 
-
-
-
-    private fun getLastLocation() {
-        //step1
-        if (checkPermissions()) {
-            if (isLocationEnabled()) {
-                getFreshLocation()
-            } else {
-                enableLocationServices()
-            }
-        } else {
-            //step2
-            requestPermissions()
+        binding.weeklyForecast.setOnClickListener {
+            Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_daysFragment)
         }
     }
+
+
+    fun locationChecker() {
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(mLocationRequest)
+
+        val result: Task<LocationSettingsResponse> =
+            LocationServices.getSettingsClient(requireActivity())
+                .checkLocationSettings(builder.build())
+
+        result.addOnCompleteListener { task ->
+
+            try {
+                task.getResult(ApiException::class.java)
+                getLastLocation()
+            } catch (exception: ApiException) {
+
+                when (exception.statusCode) {
+                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                        try {
+
+                            val resolve = exception as ResolvableApiException
+
+                            startIntentSenderForResult(
+                                resolve.resolution.intentSender,
+                                Priority.PRIORITY_HIGH_ACCURACY,
+                                null,
+                                0,
+                                0,
+                                0,
+                                null
+                            )
+                        } catch (ex: Exception) {
+
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+    }
+
+    private fun checkPermissions() {
+        if (checkSelfPermission(
+                requireActivity().applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PermissionChecker.PERMISSION_GRANTED
+            && checkSelfPermission(
+                requireActivity().applicationContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PermissionChecker.PERMISSION_GRANTED
+        ) {
+
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf<String>(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ),
+                PERMISSION_ID
+            )
+        } else {
+            locationChecker()
+        }
+    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -204,76 +285,62 @@ class HomeFragment : Fragment() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_LOCATION_CODE) {
-            if (grantResults.size > 1 && grantResults.get(0) == PackageManager.PERMISSION_GRANTED) {
-                getFreshLocation()
+        if (requestCode == PERMISSION_ID && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            getLastLocation()
+
+        }
+    }
+
+    private fun initLocation() {
+        mFusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        mLocationRequest = LocationRequest()
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        mLocationRequest.setInterval(20000)
+            .setFastestInterval(2000)
+            .setSmallestDisplacement(5f)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLastLocation() {
+        mLocationCallback = object : LocationCallback() {
+            override fun onLocationResult(res: LocationResult) {
+
+                val location = res.lastLocation
+                if (location != null) {
+                    _location.value = (Pair(location.latitude, location.longitude))
+                }
+                mFusedLocationProviderClient.removeLocationUpdates(this)
+            }
+
+        }
+        mFusedLocationProviderClient.requestLocationUpdates(
+            mLocationRequest,
+            mLocationCallback,
+            Looper.myLooper()
+        )
+
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            Priority.PRIORITY_HIGH_ACCURACY -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        getLastLocation()
+                    }
+
+                    Activity.RESULT_CANCELED -> {
+                        locationChecker()
+                    }
+                }
             }
         }
 
     }
-
-    private fun checkPermissions(): Boolean {
-        return checkSelfPermission(
-            requireActivity().applicationContext,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PermissionChecker.PERMISSION_GRANTED
-                || checkSelfPermission(
-            requireActivity().applicationContext,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PermissionChecker.PERMISSION_GRANTED
-    }
-
-    private fun requestPermissions() {
-        requestPermissions(
-            arrayOf(
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            REQUEST_LOCATION_CODE
-        )
-    }
-
-    private fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
-
-    private fun enableLocationServices() {
-        Toast.makeText(
-            requireActivity().applicationContext,
-            "Please turn on location",
-            Toast.LENGTH_SHORT
-        ).show()
-        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-    }
-
-    @SuppressLint("MissingPermission")
-    fun getFreshLocation() {
-
-        val mLocationRequest = com.google.android.gms.location.LocationRequest()
-        mLocationRequest.setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY)
-        mLocationRequest.setInterval(20000)
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-        fusedLocationProviderClient.requestLocationUpdates(
-            mLocationRequest,
-            object : LocationCallback() {
-                @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    val location = locationResult.lastLocation
-                    if (location != null) {
-                        _location.value = (Pair(location.latitude, location.longitude))
-                    }
-                 fusedLocationProviderClient.removeLocationUpdates(this)
-                }
-            },
-            Looper.myLooper()
-        )
-    }
-
 }
 
 

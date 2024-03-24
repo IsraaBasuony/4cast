@@ -95,7 +95,7 @@ class HomeUtils {
         }
         fun getAddressFormat(address: Address?): String {
             return address?.let {
-                if (it.subAdminArea != null) { " ${it.subAdminArea}" }
+                if (it.subAdminArea != null) { "${it.adminArea.split(" ").get(0)}, ${it.subAdminArea}" }
                 else { it.adminArea } }?:""
         }
     }
