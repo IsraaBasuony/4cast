@@ -1,4 +1,4 @@
-package com.iti.a4cast
+package com.iti.a4cast.ui.map.view
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -32,11 +33,20 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
+import com.iti.a4cast.R
+import com.iti.a4cast.data.local.LocalDatasource
+import com.iti.a4cast.data.model.FavLocation
+import com.iti.a4cast.data.repo.FavLocationsRepo
 import com.iti.a4cast.databinding.ActivityMapBinding
+import com.iti.a4cast.ui.map.viewmodel.MapViewModel
+import com.iti.a4cast.ui.map.viewmodel.MapViewModelFactory
 import com.iti.a4cast.ui.settings.SettingsSharedPref
 import java.util.Locale
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    lateinit var vmFactory : MapViewModelFactory
+    lateinit var  viewModel: MapViewModel
 
     private lateinit var mMap: GoogleMap
     private lateinit var _latLng: LatLng
@@ -57,6 +67,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        vmFactory =
+            MapViewModelFactory(
+                FavLocationsRepo.getInstant(LocalDatasource.getInstance(this))
+            )
+        viewModel = ViewModelProvider(this, vmFactory)[MapViewModel::class.java]
+
         sheredPref = SettingsSharedPref.getInstance(this)
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -67,11 +83,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             sheredPref.setLongitudePref(longitude)
             finish()
         }
+
+        binding.buttonSaveAsFavLoc.setOnClickListener {
+            viewModel.insertFavLocation(FavLocation(latitude = latitude, longitude = longitude))
+            finish()
+        }
         mapFragment.getMapAsync(this)
 
         initLocation()
 
         binding.buttonSaveAsMainLoc.isEnabled = false
+        binding.buttonSaveAsFavLoc.isEnabled=false
 
 
     }
@@ -95,6 +117,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun enableSaveButton() {
         binding.buttonSaveAsMainLoc.isEnabled = true
+        binding.buttonSaveAsFavLoc.isEnabled = true
     }
 
     private fun setMapLongClick(map: GoogleMap) {

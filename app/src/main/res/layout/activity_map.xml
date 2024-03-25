@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapActivity">
+    tools:context=".ui.map.view.MapActivity">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -26,6 +26,20 @@
         android:textSize="20sp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="@id/main"
+        app:layout_constraintEnd_toEndOf="@id/main"
+        app:layout_constraintStart_toStartOf="@id/main" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonSaveAsFavLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/secondary"
+        android:fontFamily="@font/bold"
+        android:text="fav location"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonSaveAsMainLoc"
         app:layout_constraintEnd_toEndOf="@id/main"
         app:layout_constraintStart_toStartOf="@id/main" />
 

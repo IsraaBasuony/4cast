@@ -10,13 +10,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.iti.a4cast.MainActivity
-import com.iti.a4cast.MapActivity
 import com.iti.a4cast.R
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
 import com.iti.a4cast.data.repo.ForecastRepo
 import com.iti.a4cast.databinding.FragmentSettingBinding
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
+import com.iti.a4cast.ui.map.view.MapActivity
 import com.iti.a4cast.ui.settings.SettingsSharedPref
 import com.iti.a4cast.util.HomeUtils
 

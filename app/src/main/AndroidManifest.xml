@@ -15,7 +15,7 @@
         android:theme="@style/Theme._4cast"
         tools:targetApi="31">
         <activity
-            android:name=".MapActivity"
+            android:name=".ui.map.view.MapActivity"
             android:exported="false" />
         <activity
             android:name=".SplashActivity"
