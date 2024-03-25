@@ -86,8 +86,7 @@ class SettingFragment : Fragment() {
                 }
 
                 R.id.radio_button_map -> {
-                    settingSharedPref.setLocationPref(SettingsSharedPref.MAP)
-                    startActivity(Intent(requireActivity(), MapActivity::class.java))
+                   startActivity(Intent(requireActivity(), MapActivity::class.java))
                 }
             }
         }

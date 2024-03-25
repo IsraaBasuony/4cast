@@ -31,7 +31,7 @@
         tools:layout="@layout/fragment_setting" />
     <fragment
         android:id="@+id/favouriteFragment"
-        android:name="com.iti.a4cast.FavouriteFragment"
+        android:name="com.iti.a4cast.ui.favourite.view.FavouriteFragment"
         android:label="Favorites"
         tools:layout="@layout/fragment_favourite" />
 </navigation>
