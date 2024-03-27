@@ -10,7 +10,7 @@ import com.iti.a4cast.data.model.FavLocation
 import com.iti.a4cast.databinding.FavPlaceItemBinding
 import com.iti.a4cast.util.HomeUtils
 
-class FavouriteAdapter(var context: Context, val onClick:(FavLocation)-> Unit) :
+class FavouriteAdapter(var context: Context, val onClick:(FavLocation)-> Unit, val onItemClick:(FavLocation)-> Unit) :
     ListAdapter<FavLocation, FavouriteAdapter.ViewHolder>(DiffUtils) {
     class ViewHolder(val binding: FavPlaceItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -33,6 +33,7 @@ class FavouriteAdapter(var context: Context, val onClick:(FavLocation)-> Unit) :
                 address?.let { it1 -> HomeUtils.getAddressFormat(it1) }
         }
         holder.binding.btnDelete.setOnClickListener { onClick.invoke(current) }
+        holder.binding.cardViewPlace.setOnClickListener { onItemClick.invoke(current) }
 
 
     }

@@ -38,15 +38,15 @@ import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.model.FavLocation
 import com.iti.a4cast.data.repo.FavLocationsRepo
 import com.iti.a4cast.databinding.ActivityMapBinding
-import com.iti.a4cast.ui.map.viewmodel.MapViewModel
-import com.iti.a4cast.ui.map.viewmodel.MapViewModelFactory
+import com.iti.a4cast.ui.favourite.viewmode.FavouriteViewModel
+import com.iti.a4cast.ui.favourite.viewmode.FavouriteViewModelFactory
 import com.iti.a4cast.ui.settings.SettingsSharedPref
 import java.util.Locale
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    lateinit var vmFactory : MapViewModelFactory
-    lateinit var  viewModel: MapViewModel
+    lateinit var vmFactory : FavouriteViewModelFactory
+    lateinit var  viewModel: FavouriteViewModel
 
     private lateinit var mMap: GoogleMap
     private lateinit var _latLng: LatLng
@@ -68,10 +68,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
 
         vmFactory =
-            MapViewModelFactory(
+            FavouriteViewModelFactory(
                 FavLocationsRepo.getInstant(LocalDatasource.getInstance(this))
             )
-        viewModel = ViewModelProvider(this, vmFactory)[MapViewModel::class.java]
+        viewModel = ViewModelProvider(this, vmFactory)[FavouriteViewModel::class.java]
+
 
         sheredPref = SettingsSharedPref.getInstance(this)
 

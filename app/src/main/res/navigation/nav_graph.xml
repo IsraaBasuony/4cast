@@ -33,5 +33,22 @@
         android:id="@+id/favouriteFragment"
         android:name="com.iti.a4cast.ui.favourite.view.FavouriteFragment"
         android:label="Favorites"
-        tools:layout="@layout/fragment_favourite" />
+        tools:layout="@layout/fragment_favourite" >
+        <action
+            android:id="@+id/action_favouriteFragment_to_favFragmentDetails"
+            app:destination="@id/favFragmentDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/favFragmentDetails"
+        android:name="com.iti.a4cast.ui.favourite.view.FavFragmentDetails"
+        android:label="fragment_fav_details"
+        tools:layout="@layout/fragment_fav_details" >
+        <argument
+            android:name="lat"
+            app:argType="string"
+            android:defaultValue="30.033333" />
+        <argument
+            android:name="long"
+            app:argType="string" />
+    </fragment>
 </navigation>

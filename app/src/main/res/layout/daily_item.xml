@@ -1,71 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="70dp">
+    android:id="@+id/hour_cardView"
+    android:layout_width="90dp"
+    android:layout_height="160dp"
+    android:layout_margin="8dp"
+    android:padding="16dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="26dp">
 
-    <TextView
-        android:id="@+id/day_txt"
-        style="@style/myFontBold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="saturday"
-        android:textColor="@color/secondary"
-        android:textSize="14sp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/day_icon"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:src="@drawable/icon_10d"
-        android:layout_marginStart="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/day_txt"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/day_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="saturday"
+            android:textColor="@color/gray"
+            style="@style/myFontBold"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/day_status"
-        style="@style/myFontMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="cloudy"
-        android:textColor="@color/secondary"
-        android:textSize="14sp"
-        android:layout_marginStart="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/day_icon"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/day_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/icon_10d"
+            app:layout_constraintBottom_toTopOf="@id/day_max_temp"
+            app:layout_constraintEnd_toEndOf="@+id/day_txt"
+            app:layout_constraintStart_toStartOf="@+id/day_txt"
+            app:layout_constraintTop_toBottomOf="@+id/day_txt" />
 
-    <TextView
-        android:id="@+id/day_max_temp"
-        style="@style/myFontBold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="36 c"
-        android:layout_marginEnd="36dp"
-        android:textColor="@color/secondary"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/day_min_temp"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/day_min_temp"
-        style="@style/myFontMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="28 c"
-        android:textColor="@color/gray"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/day_max_temp"
+            style="@style/myFontMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="21 c"
+            android:textColor="@color/secondary"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/day_icon"
+            app:layout_constraintStart_toStartOf="@+id/day_icon"
+            />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="70dp">-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/day_txt"-->
+<!--        style="@style/myFontBold"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="saturday"-->
+<!--        android:textColor="@color/secondary"-->
+<!--        android:textSize="14sp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/day_icon"-->
+<!--        android:layout_width="36dp"-->
+<!--        android:layout_height="36dp"-->
+<!--        android:src="@drawable/icon_10d"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/day_txt"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/day_status"-->
+<!--        style="@style/myFontMedium"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="cloudy"-->
+<!--        android:textColor="@color/secondary"-->
+<!--        android:textSize="14sp"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/day_icon"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/day_max_temp"-->
+<!--        style="@style/myFontBold"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="36 c"-->
+<!--        android:layout_marginEnd="36dp"-->
+<!--        android:textColor="@color/secondary"-->
+<!--        android:textSize="12sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/day_min_temp"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/day_min_temp"-->
+<!--        style="@style/myFontMedium"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:text="28 c"-->
+<!--        android:textColor="@color/gray"-->
+<!--        android:textSize="12sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
+
+</androidx.cardview.widget.CardView>

@@ -1,6 +1,8 @@
-package com.iti.a4cast.ui.days.view
+package com.iti.a4cast.ui.home.view
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -25,10 +27,14 @@ class DailyAdapter(var context: Context) : ListAdapter<Daily, DailyAdapter.ViewH
         val daily = getItem(position)
 
         holder.binding.dayMaxTemp.setTemp(daily.temp.max.toInt(), context)
-        holder.binding.dayStatus.text = daily.weather[0].description
         holder.binding.dayIcon.setImageResource(HomeUtils.getWeatherIcon(daily.weather[0].icon))
-        holder.binding.dayTxt.text = HomeUtils.getDayFormat(daily.dt, SettingsSharedPref.getInstance(context).getLanguagePref())
-        holder.binding.dayMinTemp.setTemp(daily.temp.min.toInt(), context)
+        holder.binding.dayTxt.text =if (position == 0) {
+            holder.binding.dayTxt.setTextColor( Color.parseColor("#396295"))
+            holder.binding.dayTxt.setTypeface(null, Typeface.BOLD)
+            "Today"
+        } else {
+            "${HomeUtils.getDayFormat(daily.dt, SettingsSharedPref.getInstance(context).getLanguagePref())}"
+        }
 
     }
 

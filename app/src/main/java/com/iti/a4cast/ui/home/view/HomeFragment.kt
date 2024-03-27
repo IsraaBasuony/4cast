@@ -19,7 +19,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.common.api.ApiException
@@ -53,13 +52,14 @@ import kotlin.properties.Delegates
 
 class HomeFragment : Fragment() {
 
-
     private lateinit var viewModel: HomeViewModel
     private lateinit var vmFactory: HomeViewModelFactory
     private val _location = MutableStateFlow<Pair<Double, Double>>(0.0 to 0.0)
     val location = _location.asStateFlow()
     private lateinit var hourlyAdapter: HourlyAdapter
     lateinit var sheredPref: SettingsSharedPref
+    private lateinit var dailyAdapter: DailyAdapter
+    lateinit var hourlyTomorrowAdapter: HourlyAdapter
 
     private val PERMISSION_ID = 1005
 
@@ -100,6 +100,8 @@ class HomeFragment : Fragment() {
     ): View {
 
         hourlyAdapter = HourlyAdapter(requireActivity().applicationContext)
+        hourlyTomorrowAdapter = HourlyAdapter(requireActivity().applicationContext)
+        dailyAdapter = DailyAdapter(requireActivity().applicationContext)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -179,13 +181,40 @@ class HomeFragment : Fragment() {
 
                             // binding.todayWeatherImg.setImageResource(HomeUtils.getWeatherIcon(res.data.current!!.weather[0].icon!!))
 
-                            hourlyAdapter.submitList(res.data.hourly)
+                            hourlyAdapter.submitList(res.data.hourly.subList(0, 23))
+                            binding.homeRecycleHours.adapter = hourlyAdapter
                             binding.homeRecycleHours.apply {
-                                adapter = hourlyAdapter
+
                                 layoutManager =
                                     LinearLayoutManager(requireActivity().applicationContext).apply {
                                         orientation = RecyclerView.HORIZONTAL
                                     }
+                            }
+                            binding.hourlyForecast.setOnClickListener {
+                                hourlyAdapter.submitList(res.data.hourly.subList(0, 24))
+                                binding.homeRecycleHours.adapter = hourlyAdapter
+                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.secondary))
+                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.gray))
+                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.gray))
+                            }
+                            binding.weeklyForecast.setOnClickListener {
+                                // Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_daysFragment)
+                                dailyAdapter.submitList(res.data.daily.subList(0, 8))
+                                binding.homeRecycleHours.adapter = dailyAdapter
+                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.gray))
+                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.gray))
+                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.secondary))
+                                //binding.weeklyForecast.setBackgroundDrawable(resources.getDrawable(R.drawable.rounded_corner))
+
+                            }
+                            binding.tomorrowForecast.setOnClickListener {
+
+                                hourlyTomorrowAdapter.submitList(res.data.hourly.subList(24, 48))
+                                binding.homeRecycleHours.adapter = hourlyTomorrowAdapter
+
+                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.gray))
+                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.secondary))
+                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.gray))
                             }
                         }
 
@@ -205,9 +234,7 @@ class HomeFragment : Fragment() {
         }
 
 
-        binding.weeklyForecast.setOnClickListener {
-            Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_daysFragment)
-        }
+
     }
 
 

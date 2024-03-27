@@ -16,4 +16,8 @@
     <style name="myFontSemiDold">
         <item name="android:fontFamily">@font/semibold</item>
     </style>
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/rounded_corner</item>
+        <item name="android:background">#00F6F6F6</item>
+    </style>
 </resources>

@@ -32,6 +32,7 @@ import com.iti.a4cast.data.WeatherStatus
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
 import com.iti.a4cast.data.repo.ForecastRepo
 import com.iti.a4cast.databinding.FragmentDaysBinding
+import com.iti.a4cast.ui.home.view.DailyAdapter
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
 import com.iti.a4cast.ui.settings.SettingsSharedPref

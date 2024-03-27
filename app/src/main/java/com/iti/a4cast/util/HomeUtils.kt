@@ -45,7 +45,7 @@ class HomeUtils {
         }
 
         fun timeStampToHour(dt: Long, lang: String): String {
-            var date= Date(dt * 1000)
+            var date = Date(dt * 1000)
             var dateFormat: DateFormat = SimpleDateFormat("h:mm aa", Locale(lang))
             return dateFormat.format(date)
         }
@@ -73,7 +73,12 @@ class HomeUtils {
         }
 
 
-        fun getLocationAddress(context: Context, long: Double, lat: Double, onResult: (Address?) -> Unit) {
+        fun getLocationAddress(
+            context: Context,
+            lat: Double,
+            long: Double,
+            onResult: (Address?) -> Unit
+        ) {
             var address: Address?
             val geocoder = Geocoder(context)
 
@@ -93,10 +98,17 @@ class HomeUtils {
 
             }
         }
+
         fun getAddressFormat(address: Address?): String {
             return address?.let {
-                if (it.subAdminArea != null) { "${it.adminArea.split(" ").get(0)}, ${it.subAdminArea}" }
-                else { it.adminArea } }?:""
+                if (it.subAdminArea != null && it.adminArea != null) {
+                    "${it.adminArea.split(" ").get(0)}, ${it.subAdminArea}"
+                } else if (it.adminArea != null) {
+                    "${it.adminArea.split(" ").get(0)}"
+                } else {
+                    it.countryName
+                }
+            } ?: "unKnown"
         }
     }
 }
