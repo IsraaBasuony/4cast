@@ -33,11 +33,26 @@
     <string name="temperature">Temperature</string>
     <string name="location">Location</string>
     <string name="language">Language</string>
+    <string name="no_internet">No Internet Connection</string>
+
+    <string name="weather_is_fine">Weather is fine. no alerts for the schedule time period.</string>
+    <string name="permission_request">Permission request</string>
+    <string name="please_allow_draw_over_apps_permission">please allow Draw Over Apps permission to be able to use application properly.</string>
+    <string name="warning">Warning</string>
+    <string name="unfortunately_the_display_over_other_apps_permission_is_not_granted">Unfortunately the display over other apps permission is not granted.</string>
     <string name="m">" m"</string>
     <string name="hpa">" hPa"</string>
     <string name="c_symbol" translatable="false"><sup>°C</sup></string>
     <string name="k_symbol" translatable="false"><sup>°K</sup></string>
     <string name="f_symbol" translatable="false"><sup>°F</sup></string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+    <string name="do_you_want_to_remove_this_item">Do you want to remove this item?</string>
+    <string name="alarm">Alarm</string>
+    <string name="notification">Notification</string>
+    <string name="set_zone">set Zone</string>
 
 
 </resources>

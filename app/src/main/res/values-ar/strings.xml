@@ -37,6 +37,7 @@
     <string name="language">Language</string>
     <string name="m">" m"</string>
     <string name="hpa">" hPa"</string>
+    <string name="no_internet">NoInternet</string>
     <string name="c_symbol" translatable="false"><sup>°C</sup></string>
     <string name="k_symbol" translatable="false"><sup>°K</sup></string>
     <string name="f_symbol" translatable="false"><sup>°F</sup></string>

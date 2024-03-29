@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,14 +18,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.iti.a4cast.R
 import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.model.FavLocation
-import com.iti.a4cast.data.repo.FavLocationsRepo
+import com.iti.a4cast.data.repo.FavAndAlertRepo
 import com.iti.a4cast.databinding.FragmentFavouriteBinding
 import com.iti.a4cast.ui.favourite.viewmode.FavouriteViewModel
 import com.iti.a4cast.ui.favourite.viewmode.FavouriteViewModelFactory
 import com.iti.a4cast.ui.map.view.MapActivity
+import com.iti.a4cast.util.HomeUtils
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -47,7 +50,7 @@ class FavouriteFragment : Fragment() {
 
         vmFactory =
             FavouriteViewModelFactory(
-                FavLocationsRepo.getInstant(LocalDatasource.getInstance(requireContext()))
+                FavAndAlertRepo.getInstant(LocalDatasource.getInstance(requireContext()))
             )
         viewModel = ViewModelProvider(this, vmFactory)[FavouriteViewModel::class.java]
         adapter = FavouriteAdapter(requireContext(),
@@ -55,11 +58,29 @@ class FavouriteFragment : Fragment() {
                 checkDeleteDialog(item)
             },
             onItemClick = { item ->
-                val action = FavouriteFragmentDirections.actionFavouriteFragmentToFavFragmentDetails(
-                    item.latitude.toString(),
-                    item.longitude.toString()
-                )
-                Navigation.findNavController(requireView()).navigate(action)
+                if (HomeUtils.checkForInternet(requireContext())) {
+                    val action =
+                        FavouriteFragmentDirections.actionFavouriteFragmentToFavFragmentDetails(
+                            item.latitude.toString(),
+                            item.longitude.toString()
+                        )
+                    Navigation.findNavController(requireView()).navigate(action)
+                } else {
+                    Snackbar.make(
+                        requireView(),
+                        getString(R.string.no_internet),
+                        Snackbar.LENGTH_LONG
+                    )
+                        .setAction("Setting", View.OnClickListener {
+                            startActivityForResult(
+                                Intent(
+                                    Settings.ACTION_SETTINGS
+                                ), 0
+                            );
+                        }).show()
+                }
+
+
             }
         )
 
@@ -77,7 +98,7 @@ class FavouriteFragment : Fragment() {
 
         viewModel.getAllFavLocations()
 
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favLocations.collectLatest { locations ->
                     if (locations.isNotEmpty()) {
@@ -93,7 +114,23 @@ class FavouriteFragment : Fragment() {
         }
 
         binding.btnAddFavLoc.setOnClickListener {
-            startActivity(Intent(requireActivity(), MapActivity::class.java))
+            if (HomeUtils.checkForInternet(requireContext())) {
+                startActivity(Intent(requireActivity(), MapActivity::class.java))
+
+            } else {
+                Snackbar.make(
+                    requireView(),
+                    getString(R.string.no_internet),
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("Setting", View.OnClickListener {
+                        startActivityForResult(
+                            Intent(
+                                Settings.ACTION_SETTINGS
+                            ), 0
+                        );
+                    }).show()
+            }
         }
 
     }
@@ -106,7 +143,7 @@ class FavouriteFragment : Fragment() {
         dialog.setContentView(R.layout.delete_dialog)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-       dialog.show()
+        dialog.show()
 
 
         val removeButton = dialog.findViewById<TextView>(R.id.remove)
@@ -120,7 +157,7 @@ class FavouriteFragment : Fragment() {
         }
 
         cancelButton.setOnClickListener {
-           dialog.dismiss()
+            dialog.dismiss()
         }
     }
 

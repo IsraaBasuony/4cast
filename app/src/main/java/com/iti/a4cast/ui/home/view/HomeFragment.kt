@@ -143,7 +143,6 @@ class HomeFragment : Fragment() {
 
                     when (res) {
                         is WeatherStatus.Success -> {
-
                             binding.temperature.setTemp(
                                 res.data.current?.temp?.toInt()!!,
                                 requireActivity().application

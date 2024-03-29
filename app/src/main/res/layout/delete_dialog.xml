@@ -25,7 +25,7 @@
             style="@style/myFontSemiDold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Do you want to remove\n this saved location?"
+            android:text="@string/do_you_want_to_remove_this_item"
             android:textColor="@color/black"
             android:textSize="@dimen/_14sdp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Remove"
+                android:text="@string/remove"
                 android:textColor="@color/secondary"
                 android:textSize="@dimen/_14sdp" />
 
@@ -60,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Cancel"
+                android:text="@string/cancel"
                 android:textSize="@dimen/_14sdp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

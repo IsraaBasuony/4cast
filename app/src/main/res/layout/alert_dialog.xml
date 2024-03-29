@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="20dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textFrom"
+            style="@style/myFontSemiDold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:text="@string/from"
+            android:textColor="@color/secondary"
+            android:textSize="@dimen/_14ssp"
+            app:layout_constraintEnd_toStartOf="@+id/textTo"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/guideline_one"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textTo"
+            style="@style/myFontSemiDold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="center"
+            android:text="@string/to"
+            android:textColor="@color/secondary"
+            android:textSize="@dimen/_14ssp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_two"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textFrom"
+            app:layout_constraintTop_toTopOf="@+id/textFrom" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewChooseStart"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/blue"
+            app:cardCornerRadius="24dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline_one"
+            app:layout_constraintTop_toBottomOf="@+id/textFrom">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textStartTime"
+                    style="@style/myFontMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14ssp"
+                    app:layout_constraintBottom_toTopOf="@+id/textStartDate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:text="11:00" />
+
+                <TextView
+                    android:id="@+id/textStartDate"
+                    style="@style/myFontMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14ssp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textStartTime"
+                    app:layout_constraintStart_toStartOf="@+id/textStartTime"
+                    app:layout_constraintTop_toBottomOf="@+id/textStartTime"
+                    tools:text="29/3" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewChooseEnd"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/blue"
+            app:cardCornerRadius="24dp"
+            app:layout_constraintStart_toEndOf="@id/cardViewChooseStart"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/textTo"
+            app:layout_constraintTop_toBottomOf="@+id/textFrom">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textEndTime"
+                    style="@style/myFontMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14ssp"
+                    app:layout_constraintBottom_toTopOf="@+id/textEndDate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:text="11:00" />
+
+                <TextView
+                    android:id="@+id/textEndDate"
+                    style="@style/myFontMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14ssp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textEndTime"
+                    app:layout_constraintStart_toStartOf="@+id/textEndTime"
+                    app:layout_constraintTop_toBottomOf="@+id/textEndTime"
+                    tools:text="29/3" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <RadioGroup
+            android:id="@+id/radioGroupChooseLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:checkedButton="@+id/radio_button_1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_two"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/guideline_one"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewChooseStart">
+
+            <RadioButton
+                android:id="@+id/radio_alarm"
+                style="@style/myFontMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/alarm"
+                android:textColor="@color/secondary"
+                android:textSize="@dimen/_14ssp" />
+
+            <RadioButton
+                android:id="@+id/radio_notification"
+                style="@style/myFontMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginStart="16dp"
+                android:text="@string/notification"
+                android:textColor="@color/secondary"
+                android:textSize="@dimen/_14ssp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/btnSetZone"
+            style="@style/myFontSemiDold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/secondary"
+            android:text="@string/set_zone"
+            android:textColor="@color/secondary"
+            android:textSize="@dimen/_16ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_two"
+            app:layout_constraintStart_toEndOf="@id/btnCancel"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupChooseLanguage" />
+
+        <TextView
+            android:id="@+id/btnCancel"
+            style="@style/myFontSemiDold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/cancel"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_16ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnSetZone"
+            app:layout_constraintStart_toStartOf="@+id/guideline_one"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupChooseLanguage" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

@@ -35,12 +35,16 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.iti.a4cast.R
 import com.iti.a4cast.data.local.LocalDatasource
+import com.iti.a4cast.data.model.AlertModel
 import com.iti.a4cast.data.model.FavLocation
-import com.iti.a4cast.data.repo.FavLocationsRepo
+import com.iti.a4cast.data.repo.FavAndAlertRepo
 import com.iti.a4cast.databinding.ActivityMapBinding
+import com.iti.a4cast.ui.alert.viewmodel.AlertViewModel
+import com.iti.a4cast.ui.alert.viewmodel.AlertViewModelFactory
 import com.iti.a4cast.ui.favourite.viewmode.FavouriteViewModel
 import com.iti.a4cast.ui.favourite.viewmode.FavouriteViewModelFactory
 import com.iti.a4cast.ui.settings.SettingsSharedPref
+import com.iti.a4cast.util.Constants
 import java.util.Locale
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -48,20 +52,33 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var vmFactory : FavouriteViewModelFactory
     lateinit var  viewModel: FavouriteViewModel
 
+    lateinit var alertViewModel: AlertViewModel
+    lateinit var alertViewModelFactory: AlertViewModelFactory
+
     private lateinit var mMap: GoogleMap
     private lateinit var _latLng: LatLng
-    private var latitude: Double = 0.0
-    private var longitude: Double = 0.0
 
     private var marker: Marker? = null
     private val PERMISSION_ID = 1005
-
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationCallback: LocationCallback
     private lateinit var mLocationRequest: LocationRequest
     private lateinit var sheredPref: SettingsSharedPref
-
     lateinit var binding: ActivityMapBinding
+
+    private val getAlertId by lazy {
+        intent.getStringExtra(Constants.ID)
+    }
+    private val getAlertStart by lazy {
+        intent.getLongExtra(Constants.START, 0L)
+    }
+    private val getAlertEne by lazy {
+        intent.getLongExtra(Constants.END, 0L)
+    }
+    private val getAlertType by lazy {
+        intent.getStringExtra(Constants.TYPE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapBinding.inflate(layoutInflater)
@@ -69,9 +86,15 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         vmFactory =
             FavouriteViewModelFactory(
-                FavLocationsRepo.getInstant(LocalDatasource.getInstance(this))
+                FavAndAlertRepo.getInstant(LocalDatasource.getInstance(this))
             )
         viewModel = ViewModelProvider(this, vmFactory)[FavouriteViewModel::class.java]
+
+      alertViewModelFactory =
+            AlertViewModelFactory(
+                FavAndAlertRepo.getInstant(LocalDatasource.getInstance(this))
+            )
+     alertViewModel = ViewModelProvider(this, alertViewModelFactory)[AlertViewModel::class.java]
 
 
         sheredPref = SettingsSharedPref.getInstance(this)
@@ -79,22 +102,38 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
 
         binding.buttonSaveAsMainLoc.setOnClickListener {
+             if (::_latLng.isInitialized) {
             sheredPref.setLocationPref(SettingsSharedPref.MAP)
-            sheredPref.setLatitudePref(latitude)
-            sheredPref.setLongitudePref(longitude)
+            sheredPref.setLatitudePref(_latLng.latitude)
+            sheredPref.setLongitudePref(_latLng.longitude)
+             }
             finish()
         }
 
         binding.buttonSaveAsFavLoc.setOnClickListener {
-            viewModel.insertFavLocation(FavLocation(latitude = latitude, longitude = longitude))
+            if (::_latLng.isInitialized){
+            viewModel.insertFavLocation(FavLocation(latitude = _latLng.latitude, longitude = _latLng.longitude))
+            }
             finish()
         }
+
+        binding.buttonSaveAsAlertLoc.setOnClickListener {
+            if(::_latLng.isInitialized){
+                val alert = AlertModel(id =getAlertId!!, longitude =  _latLng.longitude!!, latitude= _latLng.latitude!!, start =  getAlertStart, end = getAlertEne!!.toLong(), type = getAlertType!! )
+                alertViewModel.insertAlert(alert)
+            }
+
+            finish()
+        }
+
+
         mapFragment.getMapAsync(this)
 
         initLocation()
 
         binding.buttonSaveAsMainLoc.isEnabled = false
         binding.buttonSaveAsFavLoc.isEnabled=false
+        binding.buttonSaveAsAlertLoc.isEnabled = false
 
 
     }
@@ -119,6 +158,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun enableSaveButton() {
         binding.buttonSaveAsMainLoc.isEnabled = true
         binding.buttonSaveAsFavLoc.isEnabled = true
+        binding.buttonSaveAsAlertLoc.isEnabled = true
     }
 
     private fun setMapLongClick(map: GoogleMap) {
@@ -146,8 +186,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 MarkerOptions().position(poi.latLng).title(poi.name)
             )
             marker?.showInfoWindow()
-            latitude = poi.latLng.latitude
-            longitude = poi.latLng.longitude
+            _latLng = poi.latLng
             enableSaveButton()
             Log.d("MapClick", "Latitude: ${poi.latLng.latitude}, Longitude:${poi.latLng.latitude}")
 

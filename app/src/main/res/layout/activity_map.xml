@@ -42,5 +42,18 @@
         app:layout_constraintBottom_toTopOf="@id/buttonSaveAsMainLoc"
         app:layout_constraintEnd_toEndOf="@id/main"
         app:layout_constraintStart_toStartOf="@id/main" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonSaveAsAlertLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/secondary"
+        android:fontFamily="@font/bold"
+        android:text="alert"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonSaveAsFavLoc"
+        app:layout_constraintEnd_toEndOf="@id/main"
+        app:layout_constraintStart_toStartOf="@id/main" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,7 +21,7 @@
         tools:layout="@layout/fragment_days" />
     <fragment
         android:id="@+id/alertFragment"
-        android:name="com.iti.a4cast.AlertFragment"
+        android:name="com.iti.a4cast.ui.alert.view.AlertFragment"
         android:label="Alerts"
         tools:layout="@layout/fragment_alert" />
     <fragment
