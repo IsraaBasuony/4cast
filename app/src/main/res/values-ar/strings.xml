@@ -1,44 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">4cast</string>
-    <string name="menu_home">Home</string>
+    <string name="app_name">الطقس اليومي</string>
+    <string name="menu_home">القائمة الرئيسية</string>
     <string name="favorite">المفضلة</string>
     <string name="settings">الاعدادات</string>
-    <string name="alerts">Alerts</string>
-    <string name="open_drawer">Open Drawer</string>
-    <string name="close_drawer">Close Drawer</string>
-    <string name="home">Home</string>
-    <string name="wind_speed">Wind speed</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="open_drawer">فتح القائمة</string>
+    <string name="close_drawer">غلق القائمة</string>
+    <string name="home">الرئيسية</string>
+    <string name="wind_speed">سرعة الرياح</string>
     <string name="pressure">الضغط</string>
-    <string name="humidity">Humidity</string>
+    <string name="humidity">الرطوبة</string>
     <string name="sunday">الأحد</string>
     <string name="monday">الاثنين</string>
+    <string name="now"> الآن</string>
     <string name="tuesday">الثلاثاء</string>
     <string name="wednesday">الأربعاء</string>
     <string name="thursday">الخميس</string>
     <string name="friday">الجمعة</string>
     <string name="saturday">السبت</string>
-    <string name="clouds">Clouds</string>
-    <string name="visibility">Visibility</string>
-    <string name="uvi">UVI</string>
-    <string name="meter_per_second">" m/s"</string>
-    <string name="mile_per_hour">" mph"</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="celsius">Celsius</string>
-    <string name="kelvin">Kelvin</string>
-    <string name="fahrenheit">Fahrenheit</string>
+    <string name="clouds">نسبةالغيوم</string>
+    <string name="visibility">مدى الرؤية</string>
+    <string name="uvi">مؤشرUV</string>
+    <string name="meter_per_second">"م/ث"</string>
+    <string name="mile_per_hour">"ميل/س"</string>
+    <string name="celsius">سيليزيوس</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="kelvin">كيلفين</string>
     <string name="english">English</string>
     <string name="arabic">العربية</string>
-    <string name="gps">GPS</string>
-    <string name="map">MAP</string>
-    <string name="temperature">Temperature</string>
-    <string name="location">Location</string>
-    <string name="language">Language</string>
-    <string name="m">" m"</string>
-    <string name="hpa">" hPa"</string>
-    <string name="no_internet">NoInternet</string>
+    <string name="gps">موقعي الحالي</string>
+    <string name="map">الخريطة</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="location">الموقع</string>
+    <string name="language">اللغة</string>
+    <string name="m">"م"</string>
+    <string name="hpa">"ه.ب.أ"</string>
+    <string name="no_internet">لا يوجد اتصال بالانترنت</string>
     <string name="c_symbol" translatable="false"><sup>°C</sup></string>
     <string name="k_symbol" translatable="false"><sup>°K</sup></string>
     <string name="f_symbol" translatable="false"><sup>°F</sup></string>
+
+    <string name="weather_is_fine">الطقس رائع، لا ييوجد تحذيرات في هذة الفترة.</string>
+    <string name="permission_request">طلب إذن</string>
+    <string name="please_allow_draw_over_apps_permission">يرجى السماح بإذن العرض فوق التطبيقات لتمكين استخدام التطبيق بشكل صحيح.</string>
+    <string name="warning">تحذير</string>
+    <string name="unfortunately_the_display_over_other_apps_permission_is_not_granted">للأسف، لم يتم منح إذن العرض فوق التطبيقات الأخرى، لذا قد لا يعمل التطبيق بشكل صحيح.</string>
+    <string name="from">من:</string>
+    <string name="to">إلى:</string>
+    <string name="remove">حذف</string>
+    <string name="cancel">إلغاء</string>
+    <string name="do_you_want_to_remove_this_item">هل تريد تأكيد حذف هذا العنصر؟</string>
+    <string name="alarm">المنبه</string>
+    <string name="notification">إشعار</string>
+    <string name="set_zone">اختار المكان</string>
+    <string name="alert">تنبيه</string>
+    <string name="fav_location">موقعك المفضل</string>
+    <string name="save_location">حفظ</string>
+    <string name="dismiss">تجاهل</string>
+    <string name="london">London</string>
+    <string name="tomorrow">غدا</string>
+    <string name="today">اليوم</string>
+    <string name="week">الأسبوع</string>
+    <string name="stay_informed_stay_prepared">ابق على اطلاع، ابق على استعداد</string>
+    <string name="my_favourite">موقعي المفضل</string>
+    <string name="weather_daily_alert">تنبيه الطقس اليومي</string>
+    <string name="please_choose_loc_first">اختر موقعا أولا.</string>
+
 </resources>

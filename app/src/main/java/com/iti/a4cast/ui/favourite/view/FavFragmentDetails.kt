@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.iti.a4cast.R
 import com.iti.a4cast.data.WeatherStatus
+import com.iti.a4cast.data.local.ForecastDatabase
+import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
 import com.iti.a4cast.data.repo.ForecastRepo
 import com.iti.a4cast.databinding.FragmentFavDetailsBinding
@@ -32,7 +34,7 @@ class FavFragmentDetails : Fragment() {
     lateinit var binding: FragmentFavDetailsBinding
     lateinit var viewModel: HomeViewModel
     lateinit var vmFactory: HomeViewModelFactory
-    lateinit var  sheredPref: SettingsSharedPref
+    lateinit var sheredPref: SettingsSharedPref
     lateinit var hourlyAdapter: HourlyAdapter
     lateinit var hourlyTomorrowAdapter: HourlyAdapter
 
@@ -53,6 +55,10 @@ class FavFragmentDetails : Fragment() {
             HomeViewModelFactory(
                 ForecastRepo.getInstant(
                     ForecastRemoteDataSource.getInstance(),
+                    LocalDatasource.getInstance(
+                        ForecastDatabase.getInstance(requireActivity().applicationContext)
+                            .forecastDao()
+                    ),
                     SettingsSharedPref.getInstance(requireActivity())
                 )
             )
@@ -61,10 +67,14 @@ class FavFragmentDetails : Fragment() {
 
         sheredPref = SettingsSharedPref.getInstance(requireContext())
 
-        val latitude =arguments?.getString("lat")
-        val longitude =arguments?.getString("long")
+        val latitude = arguments?.getString("lat")
+        val longitude = arguments?.getString("long")
 
-        viewModel.getForecastWeather(latitude!!.toDouble(), longitude!!.toDouble(), sheredPref.getLanguagePref())
+        viewModel.getForecastWeather(
+            latitude!!.toDouble(),
+            longitude!!.toDouble(),
+            sheredPref.getLanguagePref()
+        )
 
         dailyAdapter = DailyAdapter(requireActivity().applicationContext)
         hourlyAdapter = HourlyAdapter(requireActivity().applicationContext)
@@ -123,7 +133,7 @@ class FavFragmentDetails : Fragment() {
                             }
 
 
-                            // binding.todayWeatherImg.setImageResource(HomeUtils.getWeatherIcon(res.data.current!!.weather[0].icon!!))
+                            binding.todayWeatherImg.setImageResource(HomeUtils.getWeatherImage(res.data.current!!.weather[0].icon!!))
 
                             hourlyAdapter.submitList(res.data.hourly.subList(0, 23))
                             binding.homeRecycleHours.adapter = hourlyAdapter
@@ -137,17 +147,17 @@ class FavFragmentDetails : Fragment() {
                             binding.hourlyForecast.setOnClickListener {
                                 hourlyAdapter.submitList(res.data.hourly.subList(0, 24))
                                 binding.homeRecycleHours.adapter = hourlyAdapter
-                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.secondary))
-                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.gray))
-                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.gray))
+                                binding.hourlyForecast.setTextColor(resources.getColor(R.color.secondary))
+                                binding.tomorrowForecast.setTextColor(resources.getColor(R.color.gray))
+                                binding.weeklyForecast.setTextColor(resources.getColor(R.color.gray))
                             }
                             binding.weeklyForecast.setOnClickListener {
                                 // Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_daysFragment)
                                 dailyAdapter.submitList(res.data.daily.subList(0, 8))
                                 binding.homeRecycleHours.adapter = dailyAdapter
-                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.gray))
-                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.gray))
-                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.secondary))
+                                binding.hourlyForecast.setTextColor(resources.getColor(R.color.gray))
+                                binding.tomorrowForecast.setTextColor(resources.getColor(R.color.gray))
+                                binding.weeklyForecast.setTextColor(resources.getColor(R.color.secondary))
                                 //binding.weeklyForecast.setBackgroundDrawable(resources.getDrawable(R.drawable.rounded_corner))
 
                             }
@@ -156,18 +166,22 @@ class FavFragmentDetails : Fragment() {
                                 hourlyTomorrowAdapter.submitList(res.data.hourly.subList(24, 48))
                                 binding.homeRecycleHours.adapter = hourlyTomorrowAdapter
 
-                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.gray))
-                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.secondary))
-                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.gray))
+                                binding.hourlyForecast.setTextColor(resources.getColor(R.color.gray))
+                                binding.tomorrowForecast.setTextColor(resources.getColor(R.color.secondary))
+                                binding.weeklyForecast.setTextColor(resources.getColor(R.color.gray))
                             }
+                            binding.progress.visibility = View.GONE
+                            binding.detailsView.visibility = View.VISIBLE
                         }
 
                         is WeatherStatus.Loading -> {
-
+                            binding.detailsView.visibility = View.GONE
+                            binding.progress.visibility = View.VISIBLE
                         }
 
                         else -> {
-
+                            binding.detailsView.visibility = View.GONE
+                            binding.progress.visibility = View.VISIBLE
                         }
                     }
 

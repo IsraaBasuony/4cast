@@ -84,6 +84,7 @@ dependencies {
     //Room
     implementation libs.androidx.room.ktx
     implementation libs.androidx.room.runtime
+    androidTestImplementation project(':app')
     kapt libs.androidx.room.compiler
 
     //Coroutines
@@ -105,6 +106,44 @@ dependencies {
 
 
     implementation libs.androidx.work.runtime.ktx
+
+
+
+    // Dependencies for local unit tests
+    testImplementation(libs.junit)
+    testImplementation(libs.hamcrest.all)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.robolectric)
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+
+    // AndroidX Test - JVM testing
+    testImplementation(libs.core.ktx)
+    testImplementation libs.androidx.junit.v113
+
+    // AndroidX Test - Instrumented testing //Added Item here
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.espresso.core.v340)
+
+    // hamcrest
+    testImplementation(libs.hamcrest)
+    testImplementation(libs.hamcrest.library)
+    androidTestImplementation(libs.hamcrest)
+    androidTestImplementation(libs.hamcrest.library)
+
+    // AndroidX and Robolectric
+    testImplementation(libs.androidx.junit.ktx)
+    testImplementation(libs.androidx.core.ktx.v140)
+    testImplementation(libs.robolectric)
+
+    // InstantTaskExecutorRule
+    testImplementation(libs.androidx.core.testing.v210)
+    androidTestImplementation(libs.androidx.core.testing)
+
+    //kotlinx-coroutines
+    implementation libs.kotlinx.coroutines.android
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+
 
 
 }

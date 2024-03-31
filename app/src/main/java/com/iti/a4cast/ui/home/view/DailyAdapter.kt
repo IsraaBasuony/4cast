@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.iti.a4cast.R
 import com.iti.a4cast.data.model.Daily
 import com.iti.a4cast.databinding.DailyItemBinding
 import com.iti.a4cast.ui.settings.SettingsSharedPref
@@ -31,7 +32,7 @@ class DailyAdapter(var context: Context) : ListAdapter<Daily, DailyAdapter.ViewH
         holder.binding.dayTxt.text =if (position == 0) {
             holder.binding.dayTxt.setTextColor( Color.parseColor("#396295"))
             holder.binding.dayTxt.setTypeface(null, Typeface.BOLD)
-            "Today"
+           context.getString(R.string.today)
         } else {
             "${HomeUtils.getDayFormat(daily.dt, SettingsSharedPref.getInstance(context).getLanguagePref())}"
         }

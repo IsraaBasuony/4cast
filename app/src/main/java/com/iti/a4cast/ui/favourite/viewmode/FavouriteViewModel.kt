@@ -6,18 +6,18 @@ import com.iti.a4cast.data.model.FavLocation
 import com.iti.a4cast.data.repo.IFavAndAlertRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavouriteViewModel (private  val _repo: IFavAndAlertRepo): ViewModel() {
 
     private val _favLocations : MutableStateFlow<List<FavLocation>> = MutableStateFlow(listOf())
-    val favLocations = _favLocations.asStateFlow()
+    var favLocations = _favLocations
 
 
     fun getAllFavLocations() {
         viewModelScope.launch(Dispatchers.IO) {
-            _repo.getAllFavLocations().collect{
+            _repo.getAllFavLocations().collectLatest{
                 _favLocations.value = it
             }
         }

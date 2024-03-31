@@ -1,8 +1,6 @@
 package com.iti.a4cast.ui.home.view
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -25,13 +23,9 @@ class HourlyAdapter(var context: Context) : ListAdapter<Current, HourlyAdapter.V
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val hourly = getItem(position)
 
-        holder.binding.hourTxt.text = if (position == 0) {
-            holder.binding.hourTxt.setTextColor( Color.parseColor("#396295"))
-            holder.binding.hourTxt.setTypeface(null, Typeface.BOLD)
-            "Now"
-        } else {
+        holder.binding.hourTxt.text =
             "${HomeUtils.timeStampToHour(hourly.dt, SettingsSharedPref.getInstance(context).getLanguagePref())}"
-        }
+
         holder.binding.hourTemp.setTemp(hourly.temp.toInt(), context)
         holder.binding.hourIcon.setImageResource(HomeUtils.getWeatherIcon(hourly.weather[0].icon))
 

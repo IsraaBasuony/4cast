@@ -8,5 +8,11 @@ object Constants {
     const val END = "END"
     const val TYPE = "TYPE"
   const val NOTIFICATION_CHANNEL_ID =  "CHANNEL_ID"
+    const val MAP_DESTINATION = "MAP_DESTINATION"
+
+    const val SETTING ="SETTING"
+    const val  FAVORITE ="FAVORITE"
+    const val ALERT = "ALERT"
+
 
 }

@@ -11,6 +11,7 @@
         android:layout_margin="8dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
+        android:backgroundTint="@color/blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="London"
+                android:text="@string/london"
                 android:textColor="@color/secondary"
                 android:textSize="@dimen/_14sdp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +43,8 @@
                 android:src="@drawable/baseline_close_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.25" />
+                app:layout_constraintWidth_percent="0.25"
+            />
 
             <ImageView
                 android:id="@+id/img"
@@ -61,6 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="12:00 am 4 march"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_16sdp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -73,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:text="12:00 am 5 march"
                 android:layout_marginTop="8dp"
+                android:textColor="@color/white"
 
                 android:textSize="@dimen/_16sdp"
                 app:layout_constraintStart_toStartOf="@id/start_time"

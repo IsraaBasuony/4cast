@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,7 +35,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
+import com.google.android.material.snackbar.Snackbar
 import com.iti.a4cast.R
+import com.iti.a4cast.data.local.ForecastDatabase
 import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.model.AlertModel
 import com.iti.a4cast.data.model.FavLocation
@@ -78,6 +82,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val getAlertType by lazy {
         intent.getStringExtra(Constants.TYPE)
     }
+    private val getDestination by lazy {
+        intent.getStringExtra(Constants.MAP_DESTINATION)
+     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,13 +93,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         vmFactory =
             FavouriteViewModelFactory(
-                FavAndAlertRepo.getInstant(LocalDatasource.getInstance(this))
+                FavAndAlertRepo.getInstant(LocalDatasource.getInstance(ForecastDatabase.getInstance(this).forecastDao()))
             )
         viewModel = ViewModelProvider(this, vmFactory)[FavouriteViewModel::class.java]
 
       alertViewModelFactory =
             AlertViewModelFactory(
-                FavAndAlertRepo.getInstant(LocalDatasource.getInstance(this))
+                FavAndAlertRepo.getInstant(LocalDatasource.getInstance(ForecastDatabase.getInstance(this).forecastDao()))
             )
      alertViewModel = ViewModelProvider(this, alertViewModelFactory)[AlertViewModel::class.java]
 
@@ -129,7 +136,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mapFragment.getMapAsync(this)
 
-        initLocation()
+
+        onBackPressedDispatcher.addCallback(this) {
+            if (getDestination.equals(Constants.ALERT) || getDestination.equals(Constants.SETTING) ) {
+                Snackbar.make(
+                    binding.root, getString(R.string.please_choose_loc_first), Snackbar.LENGTH_LONG
+                ).show()
+            }else{
+                finish()
+            }
+
+        }
 
         binding.buttonSaveAsMainLoc.isEnabled = false
         binding.buttonSaveAsFavLoc.isEnabled=false
@@ -142,13 +159,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(p0: GoogleMap) {
         mMap = p0
 
-        mMap.isMyLocationEnabled = true
+     //   mMap.isMyLocationEnabled = true
 
         mMap.uiSettings.apply {
             isCompassEnabled = true
             isZoomControlsEnabled = true
         }
-        //  checkPermissions()
         setMapLongClick(mMap)
         setPoiClick(mMap)
         setMapCameraChanged(mMap)
@@ -159,6 +175,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.buttonSaveAsMainLoc.isEnabled = true
         binding.buttonSaveAsFavLoc.isEnabled = true
         binding.buttonSaveAsAlertLoc.isEnabled = true
+    }
+
+    private fun showTheCorrectButton() {
+        if (getDestination.equals(Constants.ALERT)) {
+            binding.buttonSaveAsAlertLoc.visibility = View.VISIBLE
+        } else if (getDestination.equals(Constants.SETTING)) {
+            binding.buttonSaveAsMainLoc.visibility = View.VISIBLE
+        } else {
+            binding.buttonSaveAsFavLoc.visibility = View.VISIBLE
+        }
+
     }
 
     private fun setMapLongClick(map: GoogleMap) {
@@ -188,6 +215,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             marker?.showInfoWindow()
             _latLng = poi.latLng
             enableSaveButton()
+            showTheCorrectButton()
             Log.d("MapClick", "Latitude: ${poi.latLng.latitude}, Longitude:${poi.latLng.latitude}")
 
 

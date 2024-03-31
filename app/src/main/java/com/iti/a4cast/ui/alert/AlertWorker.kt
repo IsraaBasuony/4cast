@@ -14,6 +14,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.iti.a4cast.R
+import com.iti.a4cast.data.local.ForecastDatabase
 import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.model.AlertModel
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
@@ -30,6 +31,124 @@ import java.util.Calendar
 class AlertWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
+
+
+        val forecastRepo = ForecastRepo.getInstant(
+            ForecastRemoteDataSource.getInstance(),
+            LocalDatasource.getInstance(ForecastDatabase.getInstance(applicationContext).forecastDao()),
+            SettingsSharedPref.getInstance(applicationContext)
+        )
+        val repo =
+            FavAndAlertRepo.getInstant(LocalDatasource.getInstance(ForecastDatabase.getInstance(applicationContext).forecastDao()))
+        val context = applicationContext
+        val id = inputData.getString(Constants.ID)
+
+        return withContext(Dispatchers.IO) {
+            if (id != null) {
+                try {
+                    val alertModel = repo.getAlertByID(id)
+                    val response = forecastRepo.getForecastWeather(
+                        alertModel.latitude,
+                        alertModel.longitude,
+                        "en"
+                    )
+                    response.collectLatest {
+                        val alerts = it?.alerts
+                        if (alerts != null) {
+
+                            val alertsMessge: String = buildString {
+                                for (alert in alerts) {
+                                    append(alert.event)
+                                    append(" ")
+                                }
+                            }
+                            when (alertModel.type) {
+                                Constants.NOTIFICATION -> sendNotification(context, alertsMessge)
+                                Constants.ALARM -> createAlarm(context, alertsMessge)
+
+                            }
+                        } else {
+
+                            when (alertModel.type) {
+
+                                Constants.ALARM -> runBlocking {
+                                    createAlarm(
+                                        context,
+                                        context.getString(R.string.weather_is_fine)
+                                    )
+                                }
+
+                                Constants.NOTIFICATION -> sendNotification(
+                                    context,
+                                    context.getString(R.string.weather_is_fine)
+                                )
+                            }
+                        }
+
+                        removeFromDataBaseAndWorker(repo, alertModel, context)
+                        Result.success()
+                    }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Result.failure()
+                }
+            }
+            Result.failure()
+        }
+    }
+
+    private suspend fun removeFromDataBaseAndWorker(
+        repo: FavAndAlertRepo,
+        alertModel: AlertModel,
+        appContext: Context
+    ) {
+
+        val Day_TIME_IN_MILLISECOND = 24 * 60 * 60 * 1000L
+        val now = Calendar.getInstance().timeInMillis
+        if ((alertModel.end - now) < Day_TIME_IN_MILLISECOND) {
+            WorkManager.getInstance(appContext).cancelAllWorkByTag(alertModel.id)
+            repo.deleteAlert(alertModel)
+        }
+
+    }
+
+    private val LAYOUT_FLAG_TYPYE =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        else WindowManager.LayoutParams.TYPE_PHONE
+
+    private suspend fun createAlarm(context: Context, message: String) {
+        val mediaPlayer = MediaPlayer.create(applicationContext, R.raw.fure)
+
+        val view: View =
+            LayoutInflater.from(context).inflate(R.layout.alarm_dialog, null, false)
+        val dismissBtn = view.findViewById<Button>(R.id.btn_dismiss)
+        val textView = view.findViewById<TextView>(R.id.textViewDescribtionMessage)
+        val layoutParams = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            LAYOUT_FLAG_TYPYE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        )
+        layoutParams.gravity = Gravity.CENTER
+
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        withContext(Dispatchers.Main) {
+            windowManager.addView(view, layoutParams)
+            view.visibility = View.VISIBLE
+            textView.text = message
+        }
+
+        mediaPlayer.start()
+        mediaPlayer.isLooping = true
+        dismissBtn.setOnClickListener {
+            mediaPlayer.stop()
+            mediaPlayer.release()
+            windowManager.removeView(view)
+        }
+    }
 
 
 }

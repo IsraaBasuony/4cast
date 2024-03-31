@@ -2,18 +2,19 @@ package com.iti.a4cast.ui.home.view
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
-import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -21,20 +22,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.LocationSettingsResponse
-import com.google.android.gms.location.LocationSettingsStatusCodes
-import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.Task
+import com.google.android.material.snackbar.Snackbar
 import com.iti.a4cast.R
 import com.iti.a4cast.data.WeatherStatus
+import com.iti.a4cast.data.local.ForecastDatabase
+import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
 import com.iti.a4cast.data.repo.ForecastRepo
 import com.iti.a4cast.databinding.FragmentHomeBinding
@@ -62,10 +59,7 @@ class HomeFragment : Fragment() {
     lateinit var hourlyTomorrowAdapter: HourlyAdapter
 
     private val PERMISSION_ID = 1005
-
-    lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var mLocationCallback: LocationCallback
-    lateinit var mLocationRequest: LocationRequest
+    lateinit var mFusedLocationClient: FusedLocationProviderClient
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -73,9 +67,6 @@ class HomeFragment : Fragment() {
     var latitude by Delegates.notNull<Double>()
     var longitude by Delegates.notNull<Double>()
 
-    companion object {
-        private const val REQUEST_LOCATION_CODE = 1005
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,6 +74,7 @@ class HomeFragment : Fragment() {
             HomeViewModelFactory(
                 ForecastRepo.getInstant(
                     ForecastRemoteDataSource.getInstance(),
+                   LocalDatasource.getInstance(ForecastDatabase.getInstance(requireActivity().applicationContext).forecastDao()),
                     SettingsSharedPref.getInstance(requireActivity())
                 )
             )
@@ -90,7 +82,6 @@ class HomeFragment : Fragment() {
 
         sheredPref = SettingsSharedPref.getInstance(requireContext())
 
-        initLocation()
 
     }
 
@@ -98,7 +89,6 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         hourlyAdapter = HourlyAdapter(requireActivity().applicationContext)
         hourlyTomorrowAdapter = HourlyAdapter(requireActivity().applicationContext)
         dailyAdapter = DailyAdapter(requireActivity().applicationContext)
@@ -115,25 +105,35 @@ class HomeFragment : Fragment() {
 
         val language = viewModel.getLanguage()
 
-        if (SettingsSharedPref.getInstance(requireContext())
-                .getLocationPref() == SettingsSharedPref.GPS
-        ) {
-            checkPermissions()
-            lifecycleScope.launch {
-                location.collectLatest {
-                    viewModel.getForecastWeather(it.first, it.second, language)
-                    latitude = it.first
-                    longitude = it.second
-                    Log.d("Emitting", "onLocationResult: ${it.first}")
-
-                }
+        if (HomeUtils.checkForInternet(requireContext())) {
+            if (SettingsSharedPref.getInstance(requireContext())
+                    .getLocationPref() == SettingsSharedPref.GPS
+            ) {
+                getLastMLocation()
+            } else {
+                viewModel.getForecastWeather(
+                    sheredPref.getLatitudePref()!!.toDouble(),
+                    sheredPref.getLongitudePref()!!.toDouble(),
+                    sheredPref.getLanguagePref()
+                )
             }
         } else {
-            viewModel.getForecastWeather(
-                sheredPref.getLatitudePref()!!.toDouble(),
-                sheredPref.getLongitudePref()!!.toDouble(),
-                sheredPref.getLanguagePref()
+            Snackbar.make(
+                requireView(),
+                getString(R.string.no_internet),
+                Snackbar.LENGTH_LONG
             )
+                .setAction(getString(R.string.settings), View.OnClickListener {
+                    startActivityForResult(
+                        Intent(
+                            Settings.ACTION_SETTINGS
+                        ), 0
+                    );
+                }).show()
+
+            lifecycleScope.launch {
+                viewModel.getStoredForecast()
+            }
         }
 
         lifecycleScope.launch {
@@ -143,6 +143,8 @@ class HomeFragment : Fragment() {
 
                     when (res) {
                         is WeatherStatus.Success -> {
+
+
                             binding.temperature.setTemp(
                                 res.data.current?.temp?.toInt()!!,
                                 requireActivity().application
@@ -178,7 +180,7 @@ class HomeFragment : Fragment() {
                             }
 
 
-                            // binding.todayWeatherImg.setImageResource(HomeUtils.getWeatherIcon(res.data.current!!.weather[0].icon!!))
+                           binding.todayWeatherImg.setImageResource(HomeUtils.getWeatherImage(res.data.current!!.weather[0].icon!!))
 
                             hourlyAdapter.submitList(res.data.hourly.subList(0, 23))
                             binding.homeRecycleHours.adapter = hourlyAdapter
@@ -192,17 +194,17 @@ class HomeFragment : Fragment() {
                             binding.hourlyForecast.setOnClickListener {
                                 hourlyAdapter.submitList(res.data.hourly.subList(0, 24))
                                 binding.homeRecycleHours.adapter = hourlyAdapter
-                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.secondary))
-                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.gray))
-                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.gray))
+                                binding.hourlyForecast.setTextColor(resources.getColor(R.color.secondary))
+                                binding.tomorrowForecast.setTextColor(resources.getColor(R.color.gray))
+                                binding.weeklyForecast.setTextColor(resources.getColor(R.color.gray))
                             }
                             binding.weeklyForecast.setOnClickListener {
                                 // Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_daysFragment)
                                 dailyAdapter.submitList(res.data.daily.subList(0, 8))
                                 binding.homeRecycleHours.adapter = dailyAdapter
-                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.gray))
-                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.gray))
-                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.secondary))
+                                binding.hourlyForecast.setTextColor(resources.getColor(R.color.gray))
+                                binding.tomorrowForecast.setTextColor(resources.getColor(R.color.gray))
+                                binding.weeklyForecast.setTextColor(resources.getColor(R.color.secondary))
                                 //binding.weeklyForecast.setBackgroundDrawable(resources.getDrawable(R.drawable.rounded_corner))
 
                             }
@@ -211,18 +213,22 @@ class HomeFragment : Fragment() {
                                 hourlyTomorrowAdapter.submitList(res.data.hourly.subList(24, 48))
                                 binding.homeRecycleHours.adapter = hourlyTomorrowAdapter
 
-                                binding.hourlyForecast.setTextColor(resources.getColor( R.color.gray))
-                                binding.tomorrowForecast.setTextColor(resources.getColor( R.color.secondary))
-                                binding.weeklyForecast.setTextColor(resources.getColor( R.color.gray))
+                                binding.hourlyForecast.setTextColor(resources.getColor(R.color.gray))
+                                binding.tomorrowForecast.setTextColor(resources.getColor(R.color.secondary))
+                                binding.weeklyForecast.setTextColor(resources.getColor(R.color.gray))
                             }
+                            binding.progress.visibility = View.GONE
+                            binding.homeView.visibility = View.VISIBLE
                         }
 
                         is WeatherStatus.Loading -> {
-
+                            binding.homeView.visibility = View.GONE
+                            binding.progress.visibility = View.VISIBLE
                         }
 
                         else -> {
-
+                            binding.homeView.visibility = View.GONE
+                            binding.progress.visibility = View.VISIBLE
                         }
                     }
 
@@ -232,141 +238,97 @@ class HomeFragment : Fragment() {
 
         }
 
-
-
     }
 
 
-    fun locationChecker() {
-
-        val builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(mLocationRequest)
-
-        val result: Task<LocationSettingsResponse> =
-            LocationServices.getSettingsClient(requireActivity())
-                .checkLocationSettings(builder.build())
-
-        result.addOnCompleteListener { task ->
-
-            try {
-                task.getResult(ApiException::class.java)
-                getLastLocation()
-            } catch (exception: ApiException) {
-
-                when (exception.statusCode) {
-                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                        try {
-
-                            val resolve = exception as ResolvableApiException
-
-                            startIntentSenderForResult(
-                                resolve.resolution.intentSender,
-                                Priority.PRIORITY_HIGH_ACCURACY,
-                                null,
-                                0,
-                                0,
-                                0,
-                                null
-                            )
-                        } catch (ex: Exception) {
-
-                        }
-                    }
-                }
-            }
 
 
-        }
-
+    private fun checkPermission(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun checkPermissions() {
-        if (checkSelfPermission(
-                requireActivity().applicationContext,
+
+    private fun requestPermission() {
+        Log.i("per", "requestPermission: ")
+
+        requestPermissions(
+            arrayOf<String>(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PermissionChecker.PERMISSION_GRANTED
-            && checkSelfPermission(
-                requireActivity().applicationContext,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PermissionChecker.PERMISSION_GRANTED
-        ) {
-
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf<String>(
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ),
-                PERMISSION_ID
-            )
-        } else {
-            locationChecker()
-        }
+            ),
+            PERMISSION_ID
+        )
     }
 
-
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_ID && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            getLastLocation()
-
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastMLocation()
+            }
         }
     }
 
-    private fun initLocation() {
-        mFusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-        mLocationRequest = LocationRequest()
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        mLocationRequest.setInterval(20000)
-            .setFastestInterval(2000)
-            .setSmallestDisplacement(5f)
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLastLocation() {
-        mLocationCallback = object : LocationCallback() {
-            override fun onLocationResult(res: LocationResult) {
+    private fun getLastMLocation() {
+        if (checkPermission()) {
+            if (isLocationEnabled()) {
 
-                val location = res.lastLocation
-                if (location != null) {
-                    _location.value = (Pair(location.latitude, location.longitude))
-                }
-                mFusedLocationProviderClient.removeLocationUpdates(this)
+                requestNewLocationData()
+            } else {
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
             }
-
+        } else {
+            requestPermission()
         }
-        mFusedLocationProviderClient.requestLocationUpdates(
-            mLocationRequest,
-            mLocationCallback,
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestNewLocationData() {
+        val mLocationRequest = LocationRequest()
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        mLocationRequest.setInterval(200000)
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        mFusedLocationClient.requestLocationUpdates(
+            mLocationRequest, mLocationCallback,
             Looper.myLooper()
         )
 
     }
 
+    private val mLocationCallback: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when (requestCode) {
-            Priority.PRIORITY_HIGH_ACCURACY -> {
-                when (resultCode) {
-                    Activity.RESULT_OK -> {
-                        getLastLocation()
-                    }
-
-                    Activity.RESULT_CANCELED -> {
-                        locationChecker()
-                    }
-                }
-            }
+            mFusedLocationClient.removeLocationUpdates(this)
+            var mLastLocation: Location? = locationResult.getLastLocation()
+            viewModel.getForecastWeather(
+                mLastLocation!!.latitude,
+                mLastLocation!!.longitude,
+                sheredPref.getLanguagePref()
+            )
+            Log.i("mloc", "onLocationResult: first")
         }
-
     }
+
 }
 
 

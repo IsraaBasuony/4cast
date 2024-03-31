@@ -11,6 +11,8 @@ interface IForecastRepo {
     ): Flow<ForecastResponse>
 
     fun getLanguage(): String
-
     fun setLanguage(language: String)
+    fun insertLastForecast(forecastResponse: ForecastResponse)
+    fun getLastForecast(): Flow<ForecastResponse>
+    suspend fun deleteLastForecast()
 }

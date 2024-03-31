@@ -29,6 +29,8 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.iti.a4cast.data.WeatherStatus
+import com.iti.a4cast.data.local.ForecastDatabase
+import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
 import com.iti.a4cast.data.repo.ForecastRepo
 import com.iti.a4cast.databinding.FragmentDaysBinding
@@ -63,7 +65,8 @@ class DaysFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         vmFactory =
-            HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(), SettingsSharedPref.getInstance(requireActivity())))
+            HomeViewModelFactory(ForecastRepo.getInstant(ForecastRemoteDataSource.getInstance(),
+                LocalDatasource.getInstance(ForecastDatabase.getInstance(requireContext()).forecastDao()), SettingsSharedPref.getInstance(requireActivity())))
         viewModel = ViewModelProvider(this, vmFactory)[HomeViewModel::class.java]
 
     }

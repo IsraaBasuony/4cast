@@ -6,10 +6,11 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView_place"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="75dp"
         android:layout_margin="8dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="8dp"
+        android:backgroundTint="@color/blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,25 +22,25 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imageView_place"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/address_pana"
+                android:layout_width="68dp"
+                android:layout_height="60dp"
+               android:padding="4dp"
+                android:src="@drawable/icon_0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/btn_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/blue"
                 android:padding="8dp"
                 android:src="@drawable/baseline_delete_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginEnd="8dp"
+                android:background="@drawable/rounded_corner_background"
                 />
 
             <TextView
@@ -48,8 +49,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
-                android:textColor="@color/secondary"
+                android:textColor="@color/white"
                 android:textSize="16sp"
+                android:maxLines="1"
+                android:maxLength="25"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_place"
                 app:layout_constraintTop_toTopOf="parent" />

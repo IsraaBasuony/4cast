@@ -2,10 +2,12 @@ package com.iti.a4cast
 
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity(){
 
 
         setSupportActionBar(binding.appBarMain.toolbar)
+        binding.appBarMain.toolbar.setNavigationIcon(R.drawable.menu_icon)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -39,13 +42,26 @@ class MainActivity : AppCompatActivity(){
                 R.id.homeFragment, R.id.favouriteFragment, R.id.alertFragment, R.id.settingFragment
             ), binding.drawerLayout
         )
-        //appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
 
         findViewById<Toolbar>(R.id.toolbar).setupWithNavController(navController, appBarConfiguration)
-
         binding.navigationView.setupWithNavController(navController)
         val color = ContextCompat.getColor(this, R.color.secondary)
         binding.appBarMain.toolbar.navigationIcon?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+
+        navController.addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener{
+            override fun onDestinationChanged(
+                controller: NavController,
+                destination: NavDestination,
+                arguments: Bundle?
+            ) {
+                if (destination.id == R.id.favFragmentDetails || destination.id == R.id.settingFragment) {
+                    this@MainActivity.binding.appBarMain.toolbar.visibility = View.GONE
+                }else{
+                    this@MainActivity.binding.appBarMain.toolbar.visibility = View.VISIBLE
+
+                }
+            }
+    })
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -53,7 +69,6 @@ class MainActivity : AppCompatActivity(){
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
-
 
 
 }

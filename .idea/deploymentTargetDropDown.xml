@@ -2,7 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="LocalDataSourceTest">
+        <State />
+      </entry>
       <entry key="app">
+        <State />
+      </entry>
+      <entry key="getAlertByID_InsertAlert()">
+        <State />
+      </entry>
+      <entry key="getAllAlerts_Insert2Alert_ListSize2()">
+        <State />
+      </entry>
+      <entry key="getAllFavLocations_Insert2FavLocations_delete1Fav_ListSize1()">
         <State />
       </entry>
     </value>

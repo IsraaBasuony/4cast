@@ -20,6 +20,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.iti.a4cast.R
+import com.iti.a4cast.data.local.ForecastDatabase
 import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.model.FavLocation
 import com.iti.a4cast.data.repo.FavAndAlertRepo
@@ -27,6 +28,7 @@ import com.iti.a4cast.databinding.FragmentFavouriteBinding
 import com.iti.a4cast.ui.favourite.viewmode.FavouriteViewModel
 import com.iti.a4cast.ui.favourite.viewmode.FavouriteViewModelFactory
 import com.iti.a4cast.ui.map.view.MapActivity
+import com.iti.a4cast.util.Constants
 import com.iti.a4cast.util.HomeUtils
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,7 +52,13 @@ class FavouriteFragment : Fragment() {
 
         vmFactory =
             FavouriteViewModelFactory(
-                FavAndAlertRepo.getInstant(LocalDatasource.getInstance(requireContext()))
+                FavAndAlertRepo.getInstant(
+                    LocalDatasource.getInstance(
+                        ForecastDatabase.getInstance(
+                            requireActivity().applicationContext
+                        ).forecastDao()
+                    )
+                )
             )
         viewModel = ViewModelProvider(this, vmFactory)[FavouriteViewModel::class.java]
         adapter = FavouriteAdapter(requireContext(),
@@ -71,7 +79,7 @@ class FavouriteFragment : Fragment() {
                         getString(R.string.no_internet),
                         Snackbar.LENGTH_LONG
                     )
-                        .setAction("Setting", View.OnClickListener {
+                        .setAction(getString(R.string.settings), View.OnClickListener {
                             startActivityForResult(
                                 Intent(
                                     Settings.ACTION_SETTINGS
@@ -115,15 +123,17 @@ class FavouriteFragment : Fragment() {
 
         binding.btnAddFavLoc.setOnClickListener {
             if (HomeUtils.checkForInternet(requireContext())) {
-                startActivity(Intent(requireActivity(), MapActivity::class.java))
-
+                with(Intent(requireContext(), MapActivity::class.java)) {
+                    putExtra(Constants.MAP_DESTINATION, Constants.FAVORITE)
+                    startActivity(this)
+                }
             } else {
                 Snackbar.make(
                     requireView(),
                     getString(R.string.no_internet),
                     Snackbar.LENGTH_LONG
                 )
-                    .setAction("Setting", View.OnClickListener {
+                    .setAction(getString(R.string.settings), View.OnClickListener {
                         startActivityForResult(
                             Intent(
                                 Settings.ACTION_SETTINGS

@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/drawerLayout"
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
     tools:openDrawer="start"
     tools:context=".MainActivity">
 
@@ -29,6 +31,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
         app:headerLayout="@layout/nav_header"
         app:itemIconTint="@color/item_text_color_state"
         app:itemRippleColor="@color/rippleColor"

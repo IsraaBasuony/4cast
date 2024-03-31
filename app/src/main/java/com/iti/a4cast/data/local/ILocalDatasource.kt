@@ -2,6 +2,7 @@ package com.iti.a4cast.data.local
 
 import com.iti.a4cast.data.model.AlertModel
 import com.iti.a4cast.data.model.FavLocation
+import com.iti.a4cast.data.model.ForecastResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ILocalDatasource {
@@ -20,4 +21,7 @@ interface ILocalDatasource {
 
     fun getAlertByID(id: String): AlertModel
 
+    fun insertLastForecast(forecastResponse: ForecastResponse)
+    fun getLastForecast(): Flow<ForecastResponse>
+    suspend fun deleteLastForecast()
 }

@@ -25,16 +25,18 @@
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textColor="@color/white"
-            android:textSize="@dimen/_14ssp"
+            style="@style/myFontBold"
+            android:textSize="@dimen/_16ssp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Stay Informed, Stay Prepared"
+            android:text="@string/stay_informed_stay_prepared"
             android:textColor="@color/white"
-            android:textSize="@dimen/_11ssp" />
+            style="@style/myFontRegular"
+            android:textSize="@dimen/_8ssp" />
     </LinearLayout>
 
 

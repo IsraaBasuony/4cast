@@ -1,17 +1,15 @@
 package com.iti.a4cast.data.repo
 
 import com.iti.a4cast.data.local.ILocalDatasource
-import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.model.AlertModel
 import com.iti.a4cast.data.model.FavLocation
 import kotlinx.coroutines.flow.Flow
 
-class FavAndAlertRepo private constructor(private var _localDatasource: ILocalDatasource) :
+class FavAndAlertRepo (private var _localDatasource: ILocalDatasource) :
     IFavAndAlertRepo {
-
     companion object {
         private var instance: FavAndAlertRepo? = null
-        fun getInstant(localDatasource: LocalDatasource):FavAndAlertRepo{
+        fun getInstant(localDatasource: ILocalDatasource):FavAndAlertRepo{
             return instance ?: synchronized(this) {
                 val temp = FavAndAlertRepo(localDatasource)
                 instance = temp

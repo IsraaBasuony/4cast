@@ -2,6 +2,7 @@ package com.iti.a4cast.ui.settings.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +10,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.iti.a4cast.MainActivity
 import com.iti.a4cast.R
+import com.iti.a4cast.data.local.ForecastDatabase
+import com.iti.a4cast.data.local.LocalDatasource
 import com.iti.a4cast.data.remote.ForecastRemoteDataSource
 import com.iti.a4cast.data.repo.ForecastRepo
 import com.iti.a4cast.databinding.FragmentSettingBinding
@@ -18,6 +22,7 @@ import com.iti.a4cast.ui.home.viewmodel.HomeViewModel
 import com.iti.a4cast.ui.home.viewmodel.HomeViewModelFactory
 import com.iti.a4cast.ui.map.view.MapActivity
 import com.iti.a4cast.ui.settings.SettingsSharedPref
+import com.iti.a4cast.util.Constants
 import com.iti.a4cast.util.HomeUtils
 
 class SettingFragment : Fragment() {
@@ -43,6 +48,10 @@ class SettingFragment : Fragment() {
             HomeViewModelFactory(
                 ForecastRepo.getInstant(
                     ForecastRemoteDataSource.getInstance(),
+                    LocalDatasource.getInstance(
+                        ForecastDatabase.getInstance(requireActivity().applicationContext)
+                            .forecastDao()
+                    ),
                     SettingsSharedPref.getInstance(requireActivity().applicationContext)
                 )
             )
@@ -50,7 +59,25 @@ class SettingFragment : Fragment() {
 
 
         setUpButtons()
-        handleClicks()
+
+        if (HomeUtils.checkForInternet(requireContext())) {
+            handleClicks()
+
+        } else {
+            Snackbar.make(
+                requireView(),
+                getString(R.string.no_internet),
+                Snackbar.LENGTH_LONG
+            )
+                .setAction(context?.getString(R.string.settings), View.OnClickListener {
+                    startActivityForResult(
+                        Intent(
+                            Settings.ACTION_SETTINGS
+                        ), 0
+                    );
+                }).show()
+        }
+
 
 
     }
@@ -77,6 +104,7 @@ class SettingFragment : Fragment() {
         binding.radioGroupLocation.setOnCheckedChangeListener { _, checked ->
             when (checked) {
                 R.id.radio_button_GPS -> {
+
                     settingSharedPref.setLocationPref(SettingsSharedPref.GPS)
                     Toast.makeText(
                         requireContext(),
@@ -86,7 +114,13 @@ class SettingFragment : Fragment() {
                 }
 
                 R.id.radio_button_map -> {
-                   startActivity(Intent(requireActivity(), MapActivity::class.java))
+
+                    with(Intent(requireContext(), MapActivity::class.java)) {
+                        putExtra(Constants.MAP_DESTINATION, Constants.SETTING)
+
+                        startActivity(this)
+                    }
+
                 }
             }
         }

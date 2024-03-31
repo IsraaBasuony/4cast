@@ -1,18 +1,13 @@
 package com.iti.a4cast.data.local
 
-import android.content.Context
 import com.iti.a4cast.data.model.AlertModel
 import com.iti.a4cast.data.model.FavLocation
+import com.iti.a4cast.data.model.ForecastResponse
 import kotlinx.coroutines.flow.Flow
 
-class LocalDatasource private constructor(val context: Context) :
+class LocalDatasource private constructor(private val dao: ForecastDao) :
     ILocalDatasource {
-    private val dao: ForecastDao
 
-    init {
-        val db = ForecastDatabase.getInstance(context.applicationContext)
-        dao = db.forecastDao()
-    }
 
     override fun getAllFavLocations(): Flow<List<FavLocation>> {
         return dao.getAllFavLocations()
@@ -42,11 +37,23 @@ class LocalDatasource private constructor(val context: Context) :
         return  dao.getAlertByID(id)
     }
 
+    override fun insertLastForecast(forecastResponse: ForecastResponse) {
+        dao.insertLastForecast(forecastResponse)
+    }
+
+    override fun getLastForecast(): Flow<ForecastResponse> {
+        return dao.getLastForecast()
+    }
+
+    override suspend fun deleteLastForecast() {
+        dao.deleteLastForecast()
+    }
+
     companion object {
         private var instance: LocalDatasource? = null
-        fun getInstance(context: Context): LocalDatasource {
+        fun getInstance( dao: ForecastDao): LocalDatasource {
             return instance ?: synchronized(this) {
-                val temp = LocalDatasource(context)
+                val temp = LocalDatasource(dao)
                 instance = temp
                 temp
             }

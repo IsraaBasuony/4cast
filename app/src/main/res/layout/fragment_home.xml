@@ -4,7 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary"
+    android:id="@+id/home"
     tools:context=".ui.home.view.HomeFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/home_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,7 +35,7 @@
                 android:src="@drawable/icon_02d"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/location_txt" />
 
             <TextView
                 android:id="@+id/location_txt"
@@ -42,7 +49,7 @@
                 android:textSize="@dimen/_14sdp"
                 app:drawableStartCompat="@drawable/location"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/today_weather_img" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/temperature"
@@ -84,58 +91,62 @@
                 app:layout_constraintTop_toBottomOf="@id/status" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <LinearLayout
+            android:id="@+id/toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/current_card_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+            <TextView
+                android:id="@+id/hourly_forecast"
+                style="@style/myFontBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
 
-    <LinearLayout
-        android:id="@+id/toggle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/current_card_view"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
-        <TextView
-            android:id="@+id/hourly_forecast"
-            style="@style/myFontBold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:text="Today"
-            android:gravity="start"
-            android:textColor="@color/secondary"
-            android:textSize="@dimen/_16sdp"
-            />
-        <TextView
-            android:id="@+id/tomorrow_forecast"
-            style="@style/myFontBold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:text="Tomorrow"
-            android:gravity="center"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/_16sdp"
-            />
-        <TextView
-            android:id="@+id/weekly_forecast"
-            style="@style/myFontBold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
-            android:gravity="end"
-            android:layout_weight="1"
-            android:text="Week"
-            android:drawablePadding="2dp"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/_16sdp"
-            />
+                android:layout_weight="1"
+                android:text="@string/today"
+                android:gravity="center"
+                android:textColor="@color/secondary"
+                android:textSize="@dimen/_16sdp"
+                />
+            <TextView
+                android:id="@+id/tomorrow_forecast"
+                style="@style/myFontBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_weight="1"
+                android:text="@string/tomorrow"
+                android:gravity="center"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/_16sdp"
+                />
+            <TextView
+                android:id="@+id/weekly_forecast"
+                style="@style/myFontBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:text="@string/week"
+                android:drawablePadding="2dp"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/_16sdp"
+                />
 
-    </LinearLayout>
+        </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/home_recycle_hours"
         android:layout_width="match_parent"
@@ -152,7 +163,7 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/details_card_view"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="250dp"
             android:layout_margin="16dp"
             android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
@@ -547,6 +558,21 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/secondary"
+        android:indeterminateTintMode="src_atop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

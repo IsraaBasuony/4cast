@@ -7,6 +7,7 @@
     <color name="gray">#5C5E60</color>
     <color name="blue">#90AFD5</color>
     <color name="orange">#F1A43C</color>
+    <color name="transparent">#7990AFD5</color>
     <color name="yellow">#F5CA45</color>
     <color name="rippleColor">#396295</color>
     <color name="icon_night_color">#90AFD5</color>

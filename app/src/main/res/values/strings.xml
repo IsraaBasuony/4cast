@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">4cast</string>
+    <string name="app_name">Weather Daily</string>
     <string name="menu_home">Home</string>
     <string name="favorite">Favorite</string>
     <string name="settings">Settings</string>
@@ -22,7 +22,6 @@
     <string name="uvi">UVI</string>
     <string name="meter_per_second">" m/s"</string>
     <string name="mile_per_hour">" mph"</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="celsius">Celsius</string>
     <string name="kelvin">Kelvin</string>
     <string name="fahrenheit">Fahrenheit</string>
@@ -30,11 +29,11 @@
     <string name="arabic">Arabic</string>
     <string name="gps">GPS</string>
     <string name="map">MAP</string>
+    <string name="now">Now</string>
     <string name="temperature">Temperature</string>
     <string name="location">Location</string>
     <string name="language">Language</string>
     <string name="no_internet">No Internet Connection</string>
-
     <string name="weather_is_fine">Weather is fine. no alerts for the schedule time period.</string>
     <string name="permission_request">Permission request</string>
     <string name="please_allow_draw_over_apps_permission">please allow Draw Over Apps permission to be able to use application properly.</string>
@@ -53,6 +52,18 @@
     <string name="alarm">Alarm</string>
     <string name="notification">Notification</string>
     <string name="set_zone">set Zone</string>
+    <string name="alert">alert</string>
+    <string name="fav_location">fav location</string>
+    <string name="save_location">save location</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="london">London</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="today">Today</string>
+    <string name="week">Week</string>
+    <string name="stay_informed_stay_prepared">Stay Informed, Stay Prepared</string>
+    <string name="my_favourite">My Favourite</string>
+    <string name="weather_daily_alert">Weather Daily Alert</string>
+    <string name="please_choose_loc_first">Please choose location first.</string>
 
 
 </resources>

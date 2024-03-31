@@ -32,7 +32,7 @@ fun sendNotification(context: Context, message:String) {
 
     val notification = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.img)
-        .setContentTitle("weather notification")
+        .setContentTitle("Weather Daily")
         .setContentText(message)
         .setCategory(NotificationCompat.CATEGORY_ALARM)
         .setPriority(NotificationCompat.PRIORITY_MAX)

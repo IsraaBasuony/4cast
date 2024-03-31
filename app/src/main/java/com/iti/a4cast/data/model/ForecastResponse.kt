@@ -1,6 +1,11 @@
 package com.iti.a4cast.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "Forecast")
 data class ForecastResponse(
+    @PrimaryKey
     var id: Int,
     val lat: Double,
     val lon: Double,

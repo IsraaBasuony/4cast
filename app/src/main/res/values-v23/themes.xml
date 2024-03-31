@@ -3,7 +3,7 @@
     <style name="Theme._4cast" parent="Base.Theme._4cast">
         <!-- Transparent system bars for edge-to-edge. -->
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">#396295</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
 </resources>

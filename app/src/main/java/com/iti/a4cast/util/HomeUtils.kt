@@ -46,11 +46,38 @@ class HomeUtils {
             return imageInInteger
         }
 
+        fun getWeatherImage(imageString: String): Int {
+            val imageInInteger: Int
+            when (imageString) {
+                "01d" -> imageInInteger = R.drawable.icon_01
+                "01n" -> imageInInteger = R.drawable.icon_01
+                "02d" -> imageInInteger = R.drawable.icon_2
+                "02n" -> imageInInteger = R.drawable.icon_2
+                "03n" -> imageInInteger = R.drawable.icon_2
+                "03d" -> imageInInteger = R.drawable.icon_2
+                "04d" -> imageInInteger = R.drawable.icon_2
+                "04n" -> imageInInteger = R.drawable.icon_2
+                "09d" -> imageInInteger = R.drawable.icon_9
+                "09n" -> imageInInteger = R.drawable.icon_9
+                "10d" -> imageInInteger = R.drawable.icon_10
+                "10n" -> imageInInteger = R.drawable.icon_10
+                "11d" -> imageInInteger = R.drawable.icon_11
+                "11n" -> imageInInteger = R.drawable.icon_11
+                "13d" -> imageInInteger = R.drawable.icon_13
+                "13n" -> imageInInteger = R.drawable.icon_13
+                "50d" -> imageInInteger = R.drawable.icon_50
+                "50n" -> imageInInteger = R.drawable.icon_50
+                else -> imageInInteger = R.drawable.icon_2
+            }
+            return imageInInteger
+        }
+
         fun timeStampToHour(dt: Long, lang: String): String {
             var date = Date(dt * 1000)
             var dateFormat: DateFormat = SimpleDateFormat("h:mm aa", Locale(lang))
             return dateFormat.format(date)
         }
+
         fun timeStampMonth(dt: Long, lang: String): String {
             val date = Date(dt * 1000)
             val dateFormat: DateFormat = SimpleDateFormat("EEE, dd MMM", Locale(lang))
@@ -63,12 +90,12 @@ class HomeUtils {
                 SimpleDateFormat("hh:mm a", Locale(language))
             return convertFormat.format(date).toString()
         }
-        fun getADateFormat(timeInMilliSecond: Long, language: String):String{
+
+        fun getADateFormat(timeInMilliSecond: Long, language: String): String {
             val pattern = "dd MMMM"
             val simpleDateFormat = SimpleDateFormat(pattern, Locale(language))
             return simpleDateFormat.format(Date(timeInMilliSecond))
         }
-
 
 
         fun getDayFormat(dt: Long, lang: String): String {
@@ -115,15 +142,14 @@ class HomeUtils {
 
         fun getAddressFormat(address: Address?): String {
             return address?.let {
-                if (it.subAdminArea != null && it.adminArea != null) {
-                    "${it.adminArea.split(" ").get(0)}, ${it.subAdminArea}"
-                } else if (it.adminArea != null) {
-                    "${it.adminArea.split(" ").get(0)}"
+                if (it.subAdminArea != null) {
+                    "${it.adminArea}, ${it.subAdminArea}"
                 } else {
-                    it.countryName
+                    "${it.adminArea}, ${it.countryName}"
                 }
             } ?: "unKnown"
         }
+
         fun checkForInternet(context: Context): Boolean {
             val connectivityManager =
                 context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -163,6 +189,7 @@ fun TextView.setWindSpeed(windSpeed: Double, application: Application) {
         }
     }
 }
+
 fun TextView.setTemp(temp: Int, context: Context) {
     val symbol: String
     val preferences = SettingsSharedPref.getInstance(context)
@@ -195,6 +222,7 @@ fun TextView.setTemp(temp: Int, context: Context) {
 
 
 }
+
 fun getWindSpeedInMilesPerHour(windSpeed: Double): Double {
     return windSpeed * 2.23694
 }
